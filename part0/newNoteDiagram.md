@@ -1,4 +1,4 @@
-Here is a simple flow chart:
+Traditional webpage diagram
 
 ```mermaid
 sequenceDiagram
@@ -27,17 +27,17 @@ sequenceDiagram
     server-->>browser: main.js
     deactivate server
     activate browser
-    Note left of browser: Browser starts executing the JS code that tries to get JSON from the server
+    Note right of browser: Browser starts executing the JS code that tries to get JSON from the server
 
     browser->>server: GET /exampleapp/data.json
     deactivate browser
     activate server
-    Note right of server: server might create the JSON at this point and send it to the browser
+    Note left of server: Server might get the data from database at this point and sends it to the browser in json format
     server-->>browser: data.json
     deactivate server
 
     activate browser
-    Note left of browser: Browser continues executing the JS code that reads entries from data.json, and adds them to the page as a list
+    Note right of browser: Browser continues executing the JS code that reads entries from data.json, and adds them to the page as a list
     deactivate browser
 
 ```
