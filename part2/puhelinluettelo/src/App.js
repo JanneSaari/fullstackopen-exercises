@@ -4,11 +4,13 @@ import Phonebook from './components/Phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: "040-1231234" }
+    { name: 'Arto Hellas', number: "040-1231234" },
+    { name: 'Test Name', number: "040-9879876" },
+    { name: 'Mikko Mallikas', number: "040-5675678" },
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [filter, setFilter] = useState('');
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -27,6 +29,11 @@ const App = () => {
     }
   }
 
+  const handleFilterChange = (event) => {
+    console.log(event.target.value);
+    setFilter(event.target.value);
+  }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -38,6 +45,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <h3>Filter names</h3>
+      <input value={filter} onChange={handleFilterChange}></input>
+      <h3>Add new person</h3>
       <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleNameChange}></input>
