@@ -4,9 +4,10 @@ import Phonebook from './components/Phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: "040-1231234" },
-    { name: 'Test Name', number: "040-9879876" },
-    { name: 'Mikko Mallikas', number: "040-5675678" },
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -60,7 +61,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      <Phonebook people={persons.map(person => person)}></Phonebook>
+      <Phonebook people={persons.map(person => person).filter(person => person.name.toLowerCase().includes(filter.toLocaleLowerCase()))}></Phonebook>
     </div>
   )
 
