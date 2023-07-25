@@ -3,14 +3,14 @@ const Phonebook = ({people}) => {
     return (
         <ul>
         {people.map(person =>
-            <Entry name={person.name} number={person.number}></Entry>)}    
+            <Entry key={person.name} name={person.name} number={person.number}></Entry>)}    
         </ul>
     )
 }
 
 const Entry = ({name, number}) => {
     return (
-        <li key={name}>{name} : {number}</li>
+        <li>{name} : {number}</li>
     )
 }
 
