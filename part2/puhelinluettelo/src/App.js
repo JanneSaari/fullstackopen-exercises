@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 
 import PeopleService from './services/people'
+
 import Phonebook from './components/Phonebook'
 import FilterForm from './components/FilterForm'
 import AddPersonForm from './components/AddPersonForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [people, setPeople] = useState([]) 
@@ -90,6 +92,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={""}></Notification>
       <h3>Add new person</h3>
       <AddPersonForm addPersonFn={addPerson} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} newName={newName} newNumber={newNumber}></AddPersonForm>
       <h3>Filter names</h3>
