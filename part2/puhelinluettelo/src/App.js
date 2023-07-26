@@ -18,6 +18,9 @@ const App = () => {
       .then(response => {
         setPeople(response)
       })
+      .catch(error => {
+        console.log(error)
+      })
   }, [])
 
   const addPerson = (event) => {
@@ -27,7 +30,7 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    if(people.map(x => x.name).indexOf(newName) === -1){
+    if(people.map(x => x.name.toLocaleLowerCase()).indexOf(newName.toLocaleLowerCase()) === -1){
       PeopleService.addPerson(person)
         .then(response => {
           console.log(response);
@@ -41,7 +44,21 @@ const App = () => {
         })
     }
     else{
-      alert(`${newName} is already added to the phonebook`);
+      if(window.confirm(`Person ${newName} is already in the phonebook. Do you want to update their number?`)){
+        person.id = people.find(x => x.name === newName).id
+        if(person.id){
+          PeopleService.updatePerson(person)
+          .then(response => {
+            setPeople(people.map(person => person.name !== newName ? person : response))
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        }
+        else{
+          console.log("Something went wrong with updating data", person)
+        }
+      }
     }
   }
 
@@ -78,7 +95,9 @@ const App = () => {
       <h3>Filter names</h3>
       <FilterForm filterFn={handleFilterChange} filter={filter}></FilterForm>
       <h3>Numbers</h3>
-      <Phonebook people={people.map(person => person).filter(person => person.name.toLowerCase().includes(filter.toLocaleLowerCase()))} deleteFn={handleDeleting}></Phonebook>
+      <Phonebook people={people.map(person => person)
+        .filter(person => person.name.toLowerCase().includes(filter.toLocaleLowerCase()))}
+        deleteFn={handleDeleting}></Phonebook>
     </div>
   )
 
