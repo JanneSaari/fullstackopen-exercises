@@ -1,16 +1,16 @@
-const Phonebook = ({people}) => {
+const Phonebook = ({ people, deleteFn }) => {
     console.log(people);
     return (
         <ul>
         {people.map(person =>
-            <Entry key={person.name} name={person.name} number={person.number}></Entry>)}    
+            <Entry key={person.name} person={person} deleteFn={deleteFn}></Entry>)}    
         </ul>
     )
 }
 
-const Entry = ({name, number}) => {
+const Entry = ({ person, deleteFn }) => {
     return (
-        <li>{name} : {number}</li>
+        <li>{person.name} : {person.number} <button type="button" onClick={() => {deleteFn(person.id)}}>Delete</button></li>
     )
 }
 

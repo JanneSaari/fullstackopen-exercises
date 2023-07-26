@@ -31,7 +31,7 @@ const App = () => {
       PeopleService.addPerson(person)
         .then(response => {
           console.log(response);
-          setPeople(people.concat(person))
+          setPeople(people.concat(response))
           setNewName('')
           setNewNumber('')
         })
@@ -58,6 +58,18 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const handleDeleting = (id) => {
+    console.log("Delete: ", id)
+    if(window.confirm("Testi")){
+      console.log("Deleting...")
+      PeopleService.removePerson(id)
+        .then(response => {
+          console.log(`Person:${id} successfully deleted`, response)
+          PeopleService.getAll()
+          .then(response => setPeople(response))})
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -66,7 +78,7 @@ const App = () => {
       <h3>Filter names</h3>
       <FilterForm filterFn={handleFilterChange} filter={filter}></FilterForm>
       <h3>Numbers</h3>
-      <Phonebook people={people.map(person => person).filter(person => person.name.toLowerCase().includes(filter.toLocaleLowerCase()))}></Phonebook>
+      <Phonebook people={people.map(person => person).filter(person => person.name.toLowerCase().includes(filter.toLocaleLowerCase()))} deleteFn={handleDeleting}></Phonebook>
     </div>
   )
 
