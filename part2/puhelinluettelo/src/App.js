@@ -11,9 +11,13 @@ const App = () => {
   const [people, setPeople] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState('')
 
-  const peopleUrl = 'http://localhost:3001/persons';
+
+  const [notification, setNotification] = useState('')
+  const notificationTime = 5000
+  let notificationTimeoutID
+
 
   useEffect(() => {
     PeopleService.getAll()
@@ -39,6 +43,7 @@ const App = () => {
           setPeople(people.concat(response))
           setNewName('')
           setNewNumber('')
+          createNotification(`${person.name} succesfully added to the phonebook!`)
         })
         .catch(error => {
           console.log(error)
@@ -51,6 +56,7 @@ const App = () => {
         if(person.id){
           PeopleService.updatePerson(person)
           .then(response => {
+            createNotification(`${person.name}'s number updated!`)
             setPeople(people.map(person => person.name !== newName ? person : response))
           })
           .catch(error => {
@@ -79,20 +85,35 @@ const App = () => {
 
   const handleDeleting = (id) => {
     console.log("Delete: ", id)
-    if(window.confirm("Testi")){
-      console.log("Deleting...")
-      PeopleService.removePerson(id)
+    PeopleService.getPerson(id).then(person => {
+      console.log(person)
+      if(window.confirm(`Are you sure you want to delete person ${person.name}`)){
+        console.log("Deleting...")
+        PeopleService.removePerson(id)
         .then(response => {
-          console.log(`Person:${id} successfully deleted`, response)
+          console.log(`Person: ${person.name} successfully deleted`)
+          createNotification(`Person: ${person.name} successfully deleted`)
           PeopleService.getAll()
           .then(response => setPeople(response))})
-    }
+        }
+    })
   }
+
+
+  const createNotification = (message) => {
+    console.log(message)
+    setNotification(message)
+    clearTimeout(notificationTimeoutID)
+    notificationTimeoutID = setTimeout(() => {
+      setNotification("")
+    }, notificationTime)
+  }
+
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={""}></Notification>
+      <Notification message={notification}></Notification>
       <h3>Add new person</h3>
       <AddPersonForm addPersonFn={addPerson} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} newName={newName} newNumber={newNumber}></AddPersonForm>
       <h3>Filter names</h3>

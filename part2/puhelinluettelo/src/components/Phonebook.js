@@ -1,5 +1,4 @@
 const Phonebook = ({ people, deleteFn }) => {
-    console.log(people);
     return (
         <ul>
         {people.map(person =>
