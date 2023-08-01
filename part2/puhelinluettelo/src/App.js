@@ -15,6 +15,7 @@ const App = () => {
 
 
   const [notification, setNotification] = useState('')
+  const [isError, setIsError] = useState(false)
   const notificationTime = 5000
   let notificationTimeoutID
 
@@ -83,26 +84,32 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-  const handleDeleting = (id) => {
+  const handleDeleting = (person) => {
+    const id = person.id
     console.log("Delete: ", id)
-    PeopleService.getPerson(id).then(person => {
-      console.log(person)
-      if(window.confirm(`Are you sure you want to delete person ${person.name}`)){
+    PeopleService.getPerson(id).then(x => {
+      console.log(x)
+      if(window.confirm(`Are you sure you want to delete person ${x.name}`)){
         console.log("Deleting...")
         PeopleService.removePerson(id)
         .then(response => {
-          console.log(`Person: ${person.name} successfully deleted`)
-          createNotification(`Person: ${person.name} successfully deleted`)
+          console.log(`Person: ${x.name} successfully deleted`)
+          createNotification(`Person: ${x.name} successfully deleted`)
+
           PeopleService.getAll()
           .then(response => setPeople(response))})
         }
+      })
+        .catch(error => {
+          createNotification(`Person: ${person.name} could not be found! He might be already deleted!`, true)
     })
   }
 
 
-  const createNotification = (message) => {
+  const createNotification = (message, errorBool = false) => {
     console.log(message)
     setNotification(message)
+    setIsError(errorBool)
     clearTimeout(notificationTimeoutID)
     notificationTimeoutID = setTimeout(() => {
       setNotification("")
@@ -113,7 +120,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notification}></Notification>
+      <Notification message={notification} isError={isError}></Notification>
       <h3>Add new person</h3>
       <AddPersonForm addPersonFn={addPerson} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} newName={newName} newNumber={newNumber}></AddPersonForm>
       <h3>Filter names</h3>

@@ -9,7 +9,7 @@ const Phonebook = ({ people, deleteFn }) => {
 
 const Entry = ({ person, deleteFn }) => {
     return (
-        <li>{person.name} : {person.number} <button type="button" onClick={() => {deleteFn(person.id)}}>Delete</button></li>
+        <li>{person.name} : {person.number} <button type="button" onClick={() => {deleteFn(person)}}>Delete</button></li>
     )
 }
 
