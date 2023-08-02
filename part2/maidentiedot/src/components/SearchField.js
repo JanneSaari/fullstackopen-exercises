@@ -1,6 +1,8 @@
-const SearchField = () => {
+const SearchField = ({ filter, handleFilterChange }) => {
     return (
-    null
+        <div>
+            Find countries: <input value={filter} onChange={handleFilterChange}></input>
+        </div>
     )
 }
 
