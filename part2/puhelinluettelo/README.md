@@ -1,4 +1,2 @@
-# My submissions for FullstackOpen's exerices
-
 ## Backend on Render
-https://js-puhelinluettelo.onrender.com
+Link to the backend that is hosted on Render.com https://js-puhelinluettelo.onrender.com
