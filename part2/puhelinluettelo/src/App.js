@@ -47,8 +47,9 @@ const App = () => {
           createNotification(`${person.name} succesfully added to the phonebook!`)
         })
         .catch(error => {
-          console.log(error)
-          alert("Adding new person failed")
+          console.log(error.response.data)
+          // alert("Adding new person failed")
+          // createNotification(error.response.data, true)
         })
     }
     else{
@@ -61,7 +62,8 @@ const App = () => {
             setPeople(people.map(person => person.name !== newName ? person : response))
           })
           .catch(error => {
-            console.log(error)
+            console.log(error.response.data)
+            // createNotification(error.response.data, true)
           })
         }
         else{
