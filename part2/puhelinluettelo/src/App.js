@@ -40,6 +40,7 @@ const App = () => {
     if(people.map(x => x.name.toLocaleLowerCase()).indexOf(newName.toLocaleLowerCase()) === -1){
       PeopleService.addPerson(person)
         .then(response => {
+          console.log("adding...")
           console.log(response);
           setPeople(people.concat(response))
           setNewName('')
@@ -47,9 +48,9 @@ const App = () => {
           createNotification(`${person.name} succesfully added to the phonebook!`)
         })
         .catch(error => {
-          console.log(error.response.data)
-          // alert("Adding new person failed")
-          // createNotification(error.response.data, true)
+          console.log("adding failed")
+          console.log(error.response.data.error)
+          createNotification(error.response.data.error, true)
         })
     }
     else{
@@ -62,8 +63,8 @@ const App = () => {
             setPeople(people.map(person => person.name !== newName ? person : response))
           })
           .catch(error => {
-            console.log(error.response.data)
-            // createNotification(error.response.data, true)
+            console.log(error.response.data.error)
+            createNotification(error.response.data.error, true)
           })
         }
         else{
