@@ -71,7 +71,6 @@ describe('total likes', () => {
     }
   ]
 
-
   test('when list has only one blog equals the likes of that', () => {
     const result = listHelper.totalLikes(listWithOneBlog)
     expect(result).toBe(5)
@@ -95,5 +94,16 @@ describe('favorite blog', () => {
     }
     const result = listHelper.favoriteBlog(blogs)
     expect(result).toEqual(favorite)
+  })
+})
+
+describe('blog count by writer', () => {
+  test('most blogs', () => {
+    const mostBlogs = {
+      author: 'Robert C. Martin',
+      blogs: 3
+    }
+    const result = listHelper.mostBlogs(blogs)
+    expect(result).toEqual(mostBlogs)
   })
 })

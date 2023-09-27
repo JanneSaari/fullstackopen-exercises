@@ -1,3 +1,5 @@
+const collection = require('lodash')
+
 // eslint-disable-next-line no-unused-vars
 const dummy = (blogs) => {
   return 1
@@ -30,4 +32,16 @@ const favoriteBlog = (blogs) => {
   return favoriteBlog
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog }
+const mostBlogs = (blogs) => {
+  const mostBlogs = collection.orderBy(getBlogCounts(blogs), 'blogs', 'desc').at(0)
+  console.log(mostBlogs)
+  return mostBlogs
+}
+
+const getBlogCounts = (blogs) => {
+  const blogCounts = collection.map(collection.countBy(blogs, 'author'), (val, key) => ({ author: key, blogs: val }))
+  console.log(blogCounts)
+  return blogCounts
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
