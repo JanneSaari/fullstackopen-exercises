@@ -11,4 +11,23 @@ const totalLikes = (blogs) => {
   return likes
 }
 
-module.exports = { dummy, totalLikes }
+const favoriteBlog = (blogs) => {
+  let favoriteBlog = null
+  // {
+  //   title: 'Canonical string reduction',
+  //   author: 'Edsger W. Dijkstra',
+  //   likes: 12
+  // }
+  blogs.forEach(blog => {
+    if(favoriteBlog === null){
+      favoriteBlog = blog
+    }
+    if(blog.likes > favoriteBlog.likes){
+      favoriteBlog = blog
+    }
+  })
+
+  return favoriteBlog
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog }
