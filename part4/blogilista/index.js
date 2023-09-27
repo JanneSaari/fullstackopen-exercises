@@ -1,4 +1,4 @@
-const http = require('http')
+require('http')
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -12,13 +12,13 @@ mongoose.set('strictQuery', false)
 
 logger.info('connecting to', config.MONGODB_URI)
 mongoose.connect(config.MONGODB_URI)
-    .then(result => {
-        // logger.info(result)
-        logger.info('Connected to MongoBD')
-    })
-    .catch((error) => {
+  .then(result => {
+    logger.info(result)
+    logger.info('Connected to MongoBD')
+  })
+  .catch((error) => {
     logger.error(`error connecting to MongoBD: ${error}`)
-    })
+  })
 
 app.use(cors())
 app.use(express.static('build'))
