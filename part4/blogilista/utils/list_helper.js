@@ -1,4 +1,5 @@
 const collection = require('lodash')
+const logger = require('./logger')
 
 // eslint-disable-next-line no-unused-vars
 const dummy = (blogs) => {
@@ -15,7 +16,7 @@ const totalLikes = (blogs) => {
 
 const mostLikes = (blogs) => {
   const mostLikes = collection.orderBy(getLikeCounts(blogs), 'likes', 'desc').at(0)
-  console.log(mostLikes)
+  logger.info(mostLikes)
   return mostLikes
 }
 
@@ -26,7 +27,7 @@ const getLikeCounts = (blogs) => {
       'author': key,
       'likes': collection.sumBy(objs, 'likes') }))
     .value()
-  console.log(likeCounts)
+  logger.info(likeCounts)
   return likeCounts
 }
 
@@ -51,13 +52,13 @@ const favoriteBlog = (blogs) => {
 
 const mostBlogs = (blogs) => {
   const mostBlogs = collection.orderBy(getBlogCounts(blogs), 'blogs', 'desc').at(0)
-  console.log(mostBlogs)
+  logger.info(mostBlogs)
   return mostBlogs
 }
 
 const getBlogCounts = (blogs) => {
   const blogCounts = collection.map(collection.countBy(blogs, 'author'), (val, key) => ({ author: key, blogs: val }))
-  console.log(blogCounts)
+  logger.info(blogCounts)
   return blogCounts
 }
 
