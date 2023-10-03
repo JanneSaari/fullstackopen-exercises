@@ -97,7 +97,7 @@ describe('favorite blog', () => {
   })
 })
 
-describe('blog count by writer', () => {
+describe('blog counts by writer', () => {
   test('most blogs', () => {
     const mostBlogs = {
       author: 'Robert C. Martin',
@@ -105,5 +105,16 @@ describe('blog count by writer', () => {
     }
     const result = listHelper.mostBlogs(blogs)
     expect(result).toEqual(mostBlogs)
+  })
+})
+
+describe('like counts by writer', () => {
+  test('most likes', () => {
+    const mostLikes = {
+      author: 'Edsger W. Dijkstra',
+      likes: 17
+    }
+    const result = listHelper.mostLikes(blogs)
+    expect(result).toEqual(mostLikes)
   })
 })

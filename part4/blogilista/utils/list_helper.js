@@ -13,6 +13,23 @@ const totalLikes = (blogs) => {
   return likes
 }
 
+const mostLikes = (blogs) => {
+  const mostLikes = collection.orderBy(getLikeCounts(blogs), 'likes', 'desc').at(0)
+  console.log(mostLikes)
+  return mostLikes
+}
+
+const getLikeCounts = (blogs) => {
+  const likeCounts = collection(blogs)
+    .groupBy('author')
+    .map((objs, key) => ({
+      'author': key,
+      'likes': collection.sumBy(objs, 'likes') }))
+    .value()
+  console.log(likeCounts)
+  return likeCounts
+}
+
 const favoriteBlog = (blogs) => {
   let favoriteBlog = null
   // {
@@ -44,4 +61,4 @@ const getBlogCounts = (blogs) => {
   return blogCounts
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
+module.exports = { dummy, totalLikes, mostLikes, favoriteBlog, mostBlogs }
