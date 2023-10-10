@@ -3,13 +3,13 @@ const Blog = require('../models/blog')
 
 const logger = require('../utils/logger')
 
-blogsRouter.get('/', (request, response, next) => {
-  Blog
-    .find({})
-    .then(blogs => {
-      response.json(blogs)
-    })
-    .catch(error => next(error))
+blogsRouter.get('/', async (request, response) => {
+  const blogs = await Blog.find({})
+  response.json(blogs)
+  // .then(blogs => {
+  //   response.json(blogs)
+  // })
+  // .catch(error => next(error))
 })
 
 blogsRouter.post('/', (request, response, next) => {

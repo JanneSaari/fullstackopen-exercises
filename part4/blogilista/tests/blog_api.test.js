@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+require('express-async-errors')
 const app = require('../app')
 
 const api = supertest(app)
