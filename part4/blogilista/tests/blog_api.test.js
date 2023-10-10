@@ -31,7 +31,16 @@ test('new blog can be added', async () => {
   const countAfter = second.body.length
 
   expect(countAfter === countBefore + 1)
-  console.log(countBefore, countAfter)
+})
+
+test('if likes doesn\'t have a value, it is set to 0', async () => {
+  const newBlog = {
+    'title': 'BlogWithoutLikes',
+    'author': 'NoLikes',
+    'url': 'some/test/url'
+  }
+  const response = await api.post('/api/blogs').send(newBlog)
+  expect(response.body.likes).toBe(0)
 })
 
 afterAll(async () => {
