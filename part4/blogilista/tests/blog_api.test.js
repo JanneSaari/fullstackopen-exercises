@@ -2,8 +2,30 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 require('express-async-errors')
 const app = require('../app')
-
+const Blog = require('../models/blog')
 const api = supertest(app)
+
+const InitialBlogs = [
+  {
+    'title': 'TestTitle',
+    'author': 'TestName',
+    'url': 'some/test/url',
+    'likes': '7'
+  },
+  {
+    'title': 'SomeTitle',
+    'author': 'TesterMcTestFace',
+    'url': 'url/test/blog',
+    'likes': '9'
+  },
+  {
+    'title': 'BlogName',
+    'author': 'TestName',
+    'url': 'nice/blog/name',
+    'likes': '3'
+  }
+]
+
 
 test('blogs are returned as json', async () => {
   await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
@@ -61,4 +83,14 @@ test('if title is not defined, new blog can\'t be added', async () => {
 
 afterAll(async () => {
   await mongoose.connection.close()
+})
+
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  let blogObject = new Blog(InitialBlogs[0])
+  await blogObject.save()
+  blogObject = new Blog(InitialBlogs[1])
+  await blogObject.save()
+  blogObject = new Blog(InitialBlogs[2])
+  await blogObject.save()
 })
