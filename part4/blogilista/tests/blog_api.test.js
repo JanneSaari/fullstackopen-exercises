@@ -43,6 +43,22 @@ test('if likes doesn\'t have a value, it is set to 0', async () => {
   expect(response.body.likes).toBe(0)
 })
 
+test('if url is not defined, new blog can\'t be added', async () => {
+  const blogWithoutURL = {
+    'title': 'BlogWithoutURL',
+    'author': 'NoUrl'
+  }
+  await api.post('/api/blogs').send(blogWithoutURL).expect(400)
+})
+
+test('if title is not defined, new blog can\'t be added', async () => {
+  const blogWithoutTitle = {
+    'author': 'NoTitle',
+    'url': 'some/test/url'
+  }
+  await api.post('/api/blogs').send(blogWithoutTitle).expect(400)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
