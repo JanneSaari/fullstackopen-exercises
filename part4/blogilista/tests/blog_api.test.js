@@ -26,71 +26,69 @@ const InitialBlogs = [
   }
 ]
 
+describe('with a initial list of blogs', () => {
+  test('blogs are returned as json', async () => {
+    await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
+  })
 
-test('blogs are returned as json', async () => {
-  await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
-})
+  test('identifying field is called: id', async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body[0].id).toBeDefined()
+  })
 
-test('identifying field is called: id', async () => {
-  const response = await api.get('/api/blogs')
-  expect(response.body[0].id).toBeDefined()
-})
+  describe('adding new blogs', () => {
+    test('new blog can be added', async () => {
+      const first = await api.get('/api/blogs')
+      const countBefore = first.body.length
 
-test('new blog can be added', async () => {
-  const first = await api.get('/api/blogs')
-  const countBefore = first.body.length
+      const newBlog = {
+        'title': 'TestTitle',
+        'author': 'TestName',
+        'url': 'some/test/url',
+        'likes': '5'
+      }
 
-  const newBlog = {
-    'title': 'TestTitle',
-    'author': 'TestName',
-    'url': 'some/test/url',
-    'likes': '5'
-  }
+      await api.post('/api/blogs').send(newBlog)
 
-  await api.post('/api/blogs').send(newBlog)
+      const second = await api.get('/api/blogs')
+      const countAfter = second.body.length
 
-  const second = await api.get('/api/blogs')
-  const countAfter = second.body.length
+      expect(countAfter === countBefore + 1)
+    })
 
-  expect(countAfter === countBefore + 1)
-})
+    test('if likes doesn\'t have a value, it is set to 0', async () => {
+      const newBlog = {
+        'title': 'BlogWithoutLikes',
+        'author': 'NoLikes',
+        'url': 'some/test/url'
+      }
+      const response = await api.post('/api/blogs').send(newBlog)
+      expect(response.body.likes).toBe(0)
+    })
 
-test('if likes doesn\'t have a value, it is set to 0', async () => {
-  const newBlog = {
-    'title': 'BlogWithoutLikes',
-    'author': 'NoLikes',
-    'url': 'some/test/url'
-  }
-  const response = await api.post('/api/blogs').send(newBlog)
-  expect(response.body.likes).toBe(0)
-})
+    test('if url is not defined, new blog can\'t be added', async () => {
+      const blogWithoutURL = {
+        'title': 'BlogWithoutURL',
+        'author': 'NoUrl'
+      }
+      await api.post('/api/blogs').send(blogWithoutURL).expect(400)
+    })
 
-test('if url is not defined, new blog can\'t be added', async () => {
-  const blogWithoutURL = {
-    'title': 'BlogWithoutURL',
-    'author': 'NoUrl'
-  }
-  await api.post('/api/blogs').send(blogWithoutURL).expect(400)
-})
+    test('if title is not defined, new blog can\'t be added', async () => {
+      const blogWithoutTitle = {
+        'author': 'NoTitle',
+        'url': 'some/test/url'
+      }
+      await api.post('/api/blogs').send(blogWithoutTitle).expect(400)
+    })
+  })
 
-test('if title is not defined, new blog can\'t be added', async () => {
-  const blogWithoutTitle = {
-    'author': 'NoTitle',
-    'url': 'some/test/url'
-  }
-  await api.post('/api/blogs').send(blogWithoutTitle).expect(400)
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(InitialBlogs)
+  })
 })
 
 afterAll(async () => {
   await mongoose.connection.close()
-})
-
-beforeEach(async () => {
-  await Blog.deleteMany({})
-  let blogObject = new Blog(InitialBlogs[0])
-  await blogObject.save()
-  blogObject = new Blog(InitialBlogs[1])
-  await blogObject.save()
-  blogObject = new Blog(InitialBlogs[2])
-  await blogObject.save()
 })
