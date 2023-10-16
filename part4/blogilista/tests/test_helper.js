@@ -1,10 +1,9 @@
 const supertest = require('supertest')
 require('express-async-errors')
 const app = require('../app')
-const Blog = require('../models/blog')
 const api = supertest(app)
 
-const InitialBlogs = [
+const initialBlogs = [
   {
     'title': 'TestTitle',
     'author': 'TestName',
@@ -30,4 +29,4 @@ const blogsInDB = async(request, response) => {
   return response.body
 }
 
-module.exports = { blogsInDB, InitialBlogs }
+module.exports = { blogsInDB, initialBlogs }

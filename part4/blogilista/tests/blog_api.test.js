@@ -6,27 +6,6 @@ const Blog = require('../models/blog')
 const api = supertest(app)
 const helper = require('./test_helper')
 
-const InitialBlogs = [
-  {
-    'title': 'TestTitle',
-    'author': 'TestName',
-    'url': 'some/test/url',
-    'likes': '7'
-  },
-  {
-    'title': 'SomeTitle',
-    'author': 'TesterMcTestFace',
-    'url': 'url/test/blog',
-    'likes': '9'
-  },
-  {
-    'title': 'BlogName',
-    'author': 'TestName',
-    'url': 'nice/blog/name',
-    'likes': '3'
-  }
-]
-
 describe('with a initial list of blogs', () => {
   test('blogs are returned as json', async () => {
     await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
@@ -98,7 +77,7 @@ describe('with a initial list of blogs', () => {
       blogsInDB = await helper.blogsInDB()
       console.log(blogsInDB)
 
-      expect(blogsInDB).toHaveLength(InitialBlogs.length - 1)
+      expect(blogsInDB).toHaveLength(helper.initialBlogs.length - 1)
       const contents = blogsInDB.map(r => r.content)
       expect(contents).not.toContain(blogToDelete)
     })
@@ -106,7 +85,7 @@ describe('with a initial list of blogs', () => {
 
   beforeEach(async () => {
     await Blog.deleteMany({})
-    await Blog.insertMany(InitialBlogs)
+    await Blog.insertMany(helper.initialBlogs)
   })
 })
 
