@@ -4,6 +4,7 @@ require('express-async-errors')
 const app = require('../app')
 const Blog = require('../models/blog')
 const api = supertest(app)
+const helper = require('./test_helper')
 
 const InitialBlogs = [
   {
@@ -32,14 +33,14 @@ describe('with a initial list of blogs', () => {
   })
 
   test('identifying field is called: id', async () => {
-    const response = await api.get('/api/blogs')
-    expect(response.body[0].id).toBeDefined()
+    const response = await helper.blogsInDB()
+    expect(response[0].id).toBeDefined()
   })
 
   describe('adding new blogs', () => {
     test('new blog can be added', async () => {
-      const first = await api.get('/api/blogs')
-      const countBefore = first.body.length
+      const first = await helper.blogsInDB()
+      const countBefore = first.length
 
       const newBlog = {
         'title': 'TestTitle',
@@ -50,8 +51,8 @@ describe('with a initial list of blogs', () => {
 
       await api.post('/api/blogs').send(newBlog)
 
-      const second = await api.get('/api/blogs')
-      const countAfter = second.body.length
+      const second = await helper.blogsInDB()
+      const countAfter = second.length
 
       expect(countAfter === countBefore + 1)
     })
@@ -80,6 +81,26 @@ describe('with a initial list of blogs', () => {
         'url': 'some/test/url'
       }
       await api.post('/api/blogs').send(blogWithoutTitle).expect(400)
+    })
+  })
+
+  describe('deleting blogs', () => {
+
+    test('deleting a blog', async () => {
+      let blogsInDB = await helper.blogsInDB()
+      console.log(blogsInDB)
+      const blogToDelete = blogsInDB[0]
+      console.log(blogToDelete)
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204)
+
+      blogsInDB = await helper.blogsInDB()
+      console.log(blogsInDB)
+
+      expect(blogsInDB).toHaveLength(InitialBlogs.length - 1)
+      const contents = blogsInDB.map(r => r.content)
+      expect(contents).not.toContain(blogToDelete)
     })
   })
 
