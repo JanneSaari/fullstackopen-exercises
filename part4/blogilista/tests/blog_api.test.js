@@ -63,19 +63,28 @@ describe('with a initial list of blogs', () => {
     })
   })
 
-  describe('deleting blogs', () => {
+  describe('editing a existing blog', () => {
+    test('succeed with status code 200 if a valid id', async () => {
+      const blogsInDB = await helper.blogsInDB()
+      let editedBlog = blogsInDB[0]
+      editedBlog.likes += 1
 
-    test('deleting a blog', async () => {
+      const response = await api.put(`/api/blogs/${editedBlog.id}`).send(editedBlog).expect(200)
+      const afterEdit = response.body
+
+      expect(afterEdit.likes).toBe(editedBlog.likes)
+    })
+  })
+
+  describe('deleting blogs', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
       let blogsInDB = await helper.blogsInDB()
-      console.log(blogsInDB)
       const blogToDelete = blogsInDB[0]
-      console.log(blogToDelete)
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
         .expect(204)
 
       blogsInDB = await helper.blogsInDB()
-      console.log(blogsInDB)
 
       expect(blogsInDB).toHaveLength(helper.initialBlogs.length - 1)
       const contents = blogsInDB.map(r => r.content)
