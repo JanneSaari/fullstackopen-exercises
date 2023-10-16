@@ -74,6 +74,16 @@ describe('with a initial list of blogs', () => {
 
       expect(afterEdit.likes).toBe(editedBlog.likes)
     })
+
+    test('return status code 404 if id is not found', async () => {
+      const blogsInDB = await helper.blogsInDB()
+      let editedBlog = blogsInDB[0]
+      editedBlog.likes += 1
+      const nonExistingId = helper.validNonExistingId
+
+      const response = await api.put(`/api/blogs/${nonExistingId}`).send(editedBlog).expect(204)
+      console.log(response)
+    })
   })
 
   describe('deleting blogs', () => {

@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 require('express-async-errors')
 const app = require('../app')
+const blog = require('../models/blog')
 const api = supertest(app)
 
 const initialBlogs = [
@@ -24,9 +25,19 @@ const initialBlogs = [
   }
 ]
 
-const blogsInDB = async(request, response) => {
-  response = await api.get('/api/blogs')
+const blogsInDB = async() => {
+  const response = await api.get('/api/blogs')
   return response.body
 }
 
-module.exports = { blogsInDB, initialBlogs }
+const validExistingId = async() => {
+  const blogs = await blogsInDB()
+  return blogs[0].id
+}
+
+const validNonExistingId = async() => {
+  const id = '1111111111'
+  return id
+}
+
+module.exports = { blogsInDB, validExistingId, validNonExistingId, initialBlogs }
