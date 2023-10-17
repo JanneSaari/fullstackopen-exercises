@@ -20,7 +20,15 @@ blogsRouter.post('/', async (request, response) => {
 blogsRouter.put('/:id', async (request, response) => {
   const blog = request.body
 
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+  //TODO move checking to model after I learn how to actually make it work
+  if(blog.likes === null)
+  {
+    response.status(400).send()
+    return
+  }
+  //TODO should propably return 404 instead of 400 if update failed because of nonexisting id
+  const updatedBlog = await Blog
+    .findByIdAndUpdate(request.params.id, blog, { new: true })
   response.json(updatedBlog)
 })
 

@@ -22,18 +22,21 @@ describe('with a initial list of blogs', () => {
       const countBefore = first.length
 
       const newBlog = {
-        'title': 'TestTitle',
-        'author': 'TestName',
-        'url': 'some/test/url',
+        'title': 'newBlog',
+        'author': 'newAuthor',
+        'url': 'new/url',
         'likes': '5'
       }
 
-      await api.post('/api/blogs').send(newBlog)
+      const res = await api.post('/api/blogs').send(newBlog)
+      const addedBlog = res.body
 
       const second = await helper.blogsInDB()
       const countAfter = second.length
 
+      console.log(addedBlog)
       expect(countAfter === countBefore + 1)
+      expect(second).toContainEqual(addedBlog)
     })
 
     test('if likes doesn\'t have a value, it is set to 0', async () => {
@@ -64,7 +67,7 @@ describe('with a initial list of blogs', () => {
   })
 
   describe('editing a existing blog', () => {
-    test('succeed with status code 200 if a valid id', async () => {
+    test('succeed with status code 200 if updated', async () => {
       const blogsInDB = await helper.blogsInDB()
       let editedBlog = blogsInDB[0]
       editedBlog.likes += 1
@@ -75,14 +78,29 @@ describe('with a initial list of blogs', () => {
       expect(afterEdit.likes).toBe(editedBlog.likes)
     })
 
-    test('return status code 404 if id is not found', async () => {
+    test('return status code 400 if id is not found', async () => {
       const blogsInDB = await helper.blogsInDB()
       let editedBlog = blogsInDB[0]
       editedBlog.likes += 1
-      const nonExistingId = helper.validNonExistingId
+      const nonExistingId = await helper.validNonExistingId()
 
-      const response = await api.put(`/api/blogs/${nonExistingId}`).send(editedBlog).expect(204)
-      console.log(response)
+      await api.put(`/api/blogs/${nonExistingId}`).send(editedBlog).expect(400)
+    })
+
+    test('don\'t update if values were not valid', async () => {
+      const blogsInDB = await helper.blogsInDB()
+      const beforeEdit = blogsInDB[0]
+      let editedBlog = { ...beforeEdit }
+      editedBlog.likes = null
+
+      await api.put(`/api/blogs/${editedBlog.id}`).send(editedBlog).expect(400)
+      const foo = await helper.blogsInDB()
+      const afterEdit = foo[0]
+
+      console.log(beforeEdit)
+      console.log(afterEdit)
+
+      expect(afterEdit).toEqual(beforeEdit)
     })
   })
 
