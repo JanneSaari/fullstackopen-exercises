@@ -1,7 +1,6 @@
 const supertest = require('supertest')
 require('express-async-errors')
 const app = require('../app')
-const blog = require('../models/blog')
 const api = supertest(app)
 
 const initialBlogs = [
