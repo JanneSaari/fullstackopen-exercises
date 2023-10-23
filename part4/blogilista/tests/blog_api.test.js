@@ -34,7 +34,6 @@ describe('with a initial list of blogs', () => {
       const second = await helper.blogsInDB()
       const countAfter = second.length
 
-      console.log(addedBlog)
       expect(countAfter === countBefore + 1)
       expect(second).toContainEqual(addedBlog)
     })
@@ -96,9 +95,6 @@ describe('with a initial list of blogs', () => {
       await api.put(`/api/blogs/${editedBlog.id}`).send(editedBlog).expect(400)
       const foo = await helper.blogsInDB()
       const afterEdit = foo[0]
-
-      console.log(beforeEdit)
-      console.log(afterEdit)
 
       expect(afterEdit).toEqual(beforeEdit)
     })
