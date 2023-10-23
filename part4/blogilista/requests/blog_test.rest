@@ -10,3 +10,7 @@ Content-Type: application/json
 
 ###
 http://localhost:3001/api/blogs
+
+### Users
+
+http://localhost:3001/api/users

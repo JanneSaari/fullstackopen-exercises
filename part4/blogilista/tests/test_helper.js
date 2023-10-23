@@ -2,6 +2,7 @@ const supertest = require('supertest')
 require('express-async-errors')
 const app = require('../app')
 const api = supertest(app)
+const User = require('../models/user')
 
 const initialBlogs = [
   {
@@ -39,4 +40,14 @@ const validNonExistingId = async() => {
   return id
 }
 
-module.exports = { blogsInDB, validExistingId, validNonExistingId, initialBlogs }
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(u => u.toJSON())
+}
+
+module.exports = {
+  blogsInDB,
+  validExistingId,
+  validNonExistingId,
+  usersInDb,
+  initialBlogs }
