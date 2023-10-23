@@ -38,3 +38,27 @@ describe('when there is initially one user at db', () => {
     expect(usernames).toContain(newUser.username)
   })
 })
+
+describe('password validation', () => {
+  test('user without password should fail with status 400',  async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const noPwUser = {
+      username: 'noPwUser',
+      name: 'No Pw'
+    }
+
+    const res = await api
+      .post('/api/users')
+      .send(noPwUser)
+      .expect(400)
+
+    expect(res.body.error).toBe('password required')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).not.toContain(noPwUser.username)
+  })
+})
