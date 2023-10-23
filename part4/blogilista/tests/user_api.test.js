@@ -37,10 +37,31 @@ describe('when there is initially one user at db', () => {
     const usernames = usersAtEnd.map(u => u.username)
     expect(usernames).toContain(newUser.username)
   })
+
+  test('too short username should fail with code 400', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'qw',
+      name: 'Short Name',
+      password: 'salainen',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).not.toContain(newUser.username)
+  })
 })
 
 describe('password validation', () => {
-  test('user without password should fail with status 400',  async () => {
+  test('user without password should fail with status 400 and give error',  async () => {
     const usersAtStart = await helper.usersInDb()
 
     const noPwUser = {
@@ -60,5 +81,28 @@ describe('password validation', () => {
 
     const usernames = usersAtEnd.map(u => u.username)
     expect(usernames).not.toContain(noPwUser.username)
+  })
+
+  test('too short pw should fail with 400 and give error', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const tooShortPwUser = {
+      username: 'tooShortPwUser',
+      name: 'Short Pw',
+      password: 'qw'
+    }
+
+    const res = await api
+      .post('/api/users')
+      .send(tooShortPwUser)
+      .expect(400)
+
+    expect(res.body.error).toBe('password too short')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).not.toContain(tooShortPwUser.username)
   })
 })
