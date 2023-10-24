@@ -45,9 +45,16 @@ const usersInDb = async () => {
   return users.map(u => u.toJSON())
 }
 
+const randomUser = async () => {
+  const users = await User.find({})
+  const user = users[Math.floor(Math.random()*users.length)]
+  return user
+}
+
 module.exports = {
   blogsInDB,
   validExistingId,
   validNonExistingId,
   usersInDb,
+  randomUser,
   initialBlogs }
