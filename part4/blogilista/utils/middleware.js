@@ -13,7 +13,6 @@ const tokenExtractor = (request, response, next) => {
   let token
   if (authorization && authorization.startsWith('Bearer ')) {
     token = authorization.replace('Bearer ', '')
-    logger.info('token saved')
     request.token = token
   }
 
