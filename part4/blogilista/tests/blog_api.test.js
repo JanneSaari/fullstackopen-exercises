@@ -30,7 +30,9 @@ describe('with a initial list of blogs', () => {
         'likes': '5'
       }
 
-      const res = await api.post('/api/blogs').send(newBlog)
+      const res = await api
+        .post('/api/blogs')
+        .send(newBlog)
       const addedBlog = res.body
 
       const second = await helper.blogsInDB()
