@@ -13,9 +13,9 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    blogService.getAll().then(blogs => 
+      setBlogs(blogs)
+    )
   }, [])
 
   useEffect(() => {
@@ -23,6 +23,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -36,6 +37,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedAppUser', JSON.stringify(user)
       )
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -50,12 +52,24 @@ const App = () => {
   const handleLogout = async (event) => {
     event.preventDefault()
     console.log('logging user out', user.username)
+    blogService.setToken(null)
     window.localStorage.removeItem('loggedAppUser')
     setUser(null)
   }
 
   const handleNewBlog = async (event) => {
     event.preventDefault()
+    const newBlog = {
+      title: title,
+      author: author,
+      url: url
+    }
+
+    console.log(newBlog)
+    blogService.addBlog(newBlog)
+
+    const foo = await blogService.getAll()
+    setBlogs(foo)
   }
   
   const loginForm = () => (
@@ -116,8 +130,8 @@ const App = () => {
           onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button type="submit">Add</button>
-      </form>      
+        <button type="submit" onClick={handleNewBlog}>Add</button>
+      </form>
     </div>
   )
 
