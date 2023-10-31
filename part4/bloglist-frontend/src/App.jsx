@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +12,8 @@ const App = () => {
   const [author, setAuthor] = useState('') 
   const [url, setUrl] = useState('') 
   const [user, setUser] = useState(null)
+  const [notification, setNotification] = useState(null)
+  const [isNotificationError, setIsNotificationError] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs => 
@@ -42,9 +45,11 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setNotification('wrong credentials')
+      setIsNotificationError(true)
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
+        setIsNotificationError(false)
       }, 5000)
     }
   }
@@ -54,6 +59,12 @@ const App = () => {
     console.log('logging user out', user.username)
     blogService.setToken(null)
     window.localStorage.removeItem('loggedAppUser')
+    setNotification(`User ${user.username} is logged out`)
+    setIsNotificationError(false)
+    setTimeout(() => {
+      setNotification(null)
+      setIsNotificationError(false)
+    }, 5000)
     setUser(null)
   }
 
@@ -67,6 +78,8 @@ const App = () => {
 
     console.log(newBlog)
     blogService.addBlog(newBlog)
+    setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`)
+    setIsNotificationError(false)
 
     const foo = await blogService.getAll()
     setBlogs(foo)
@@ -148,6 +161,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notification} isError={isNotificationError}/>
       {!user && loginForm()}
       {user && blogList()}
       {user && blogForm()}
