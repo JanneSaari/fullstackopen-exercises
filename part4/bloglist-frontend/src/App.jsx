@@ -117,7 +117,6 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       {console.log(user)}
-      <p>{user.username} has logged in <button type='button' onClick={handleLogout}>Logout</button></p>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
         )}
@@ -128,11 +127,14 @@ const App = () => {
     <div>
       <Notification message={notification} isError={isNotificationError}/>
       {!user && loginForm()}
-      {user && blogList()}
+      {user && 
+        <p>{user.username} has logged in <button type='button' onClick={handleLogout}>Logout</button></p>
+      }
       {user && 
         <Togglable buttonLabel="new blog" ref={blogFormRef}>
           <BlogForm createBlog={createBlog} />
         </Togglable>}
+      {user && blogList()}
     </div>
   )
 }
