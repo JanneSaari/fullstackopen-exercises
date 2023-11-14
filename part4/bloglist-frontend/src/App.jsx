@@ -69,7 +69,7 @@ const App = () => {
     setUser(null)
   }
 
-  const createBlog = async ( blogObject) => {
+  const createBlog = async (blogObject) => {
     const newBlog = {
       title: blogObject.title,
       author: blogObject.author,
@@ -84,7 +84,18 @@ const App = () => {
 
     const foo = await blogService.getAll()
     setBlogs(foo)
-}
+  }
+
+  const updateBlog = async (updatedBlog) => {
+    const newBlog = {...updatedBlog}
+    console.log(newBlog)
+    await blogService.updateBlog(newBlog)
+    // setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`)
+    // setIsNotificationError(false)
+
+    const foo = await blogService.getAll()
+    setBlogs(foo)
+  }
 
   const loginForm = () => (
     <div>
@@ -118,7 +129,7 @@ const App = () => {
       <h2>blogs</h2>
       {console.log(user)}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlogFn={updateBlog} />
         )}
     </div>
   )
