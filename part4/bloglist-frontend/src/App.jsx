@@ -128,9 +128,17 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       {console.log(user)}
-      {blogs.map(blog =>
+      {blogs
+      .sort((a, b) => {
+        console.log('sorting', a, b)
+        const result = a.likes <= b.likes
+        console.log(result)
+        return result
+      })
+      .map(blog =>
         <Blog key={blog.id} blog={blog} updateBlogFn={updateBlog} />
-        )}
+        )
+        }
     </div>
   )
 
