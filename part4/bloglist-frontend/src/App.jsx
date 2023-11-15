@@ -79,6 +79,7 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     console.log(newBlog)
     await blogService.addBlog(newBlog)
+
     setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`)
     setIsNotificationError(false)
 
@@ -90,9 +91,26 @@ const App = () => {
     const newBlog = {...updatedBlog}
     console.log(newBlog)
     await blogService.updateBlog(newBlog)
-    // setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`)
-    // setIsNotificationError(false)
 
+    setNotification(`Blog "${newBlog.title}" by ${newBlog.author} updated`)
+    setIsNotificationError(false)
+    
+    const foo = await blogService.getAll()
+    setBlogs(foo)
+  }
+
+  const deleteBlog = async (blog) => {
+    await blogService.deleteBlog(blog)
+    
+    setNotification(`Blog "${blog.title}" by ${blog.author} deleted`)
+    setIsNotificationError(true)
+    
+    const foo = await blogService.getAll()
+    setBlogs(foo)
+    // await updateBlogList()
+  }
+
+  const updateBlogList = async () => {
     const foo = await blogService.getAll()
     setBlogs(foo)
   }
@@ -136,7 +154,7 @@ const App = () => {
         return result
       })
       .map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlogFn={updateBlog} />
+        <Blog key={blog.id} blog={blog} updateBlogFn={updateBlog} deleteBlogFn={deleteBlog} />
         )
         }
     </div>

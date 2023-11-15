@@ -41,14 +41,16 @@ blogsRouter.put('/:id', async (request, response) => {
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const user = request.user
   const blog = await Blog.findById(request.params.id)
-  logger.info(user)
-  logger.info(blog)
-  console.log('foo')
+  logger.info('delete, user:', user)
+  logger.info('delete, blog:', blog)
 
   if(blog.user._id.toString() === user.id.toString()){
     const result = await Blog.findByIdAndRemove(request.params.id)
     logger.info('Blog deleted: ', result)
     response.status(204).json(result)
+  }
+  else {
+    logger.info(`someone ${user} tried to delete blog: ${blog}, but failed`)
   }
 })
 
