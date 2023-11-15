@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('./users')
 
 const logger = require('../utils/logger')
 const { userExtractor } = require('../utils/middleware')
@@ -16,6 +17,8 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   const user = request.user
   blog.user = user._id
 
+  logger.info('blog in blogsRouter/post', blog)
+
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
@@ -23,12 +26,17 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.put('/:id', async (request, response) => {
-  const blog = request.body
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
+  const blog = new Blog(request.body)
+
+  const user = request.user
+  blog.user = user._id
+  logger.info('blog in blogsRouter/put', blog)
 
   //TODO move checking to model after I learn how to actually make it work
   if(blog.likes === null)
   {
+    logger.info('failed to update blog')
     response.status(400).send()
     return
   }
@@ -44,14 +52,18 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   logger.info('delete, user:', user)
   logger.info('delete, blog:', blog)
 
-  if(blog.user._id.toString() === user.id.toString()){
-    const result = await Blog.findByIdAndRemove(request.params.id)
-    logger.info('Blog deleted: ', result)
-    response.status(204).json(result)
+  if(blog.user === null){
+    return
   }
-  else {
-    logger.info(`someone ${user} tried to delete blog: ${blog}, but failed`)
-  }
+  const result = await Blog.findByIdAndRemove(request.params.id)
+  logger.info('Blog deleted: ', result)
+
+  //Remove blog from users blog list
+  const userBlogs = await User.findById(user.id)
+  const updatedBlogs = userBlogs.toSpliced(userBlogs.find(blog.id), 1)
+  await User.findByIdAndUpdate(user.id, updatedBlogs)
+
+  response.status(204).json(result)
 })
 
 module.exports = blogsRouter
