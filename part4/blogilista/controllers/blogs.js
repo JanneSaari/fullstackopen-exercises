@@ -1,6 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('./users')
+const User = require('../models/user')
 
 const logger = require('../utils/logger')
 const { userExtractor } = require('../utils/middleware')
@@ -52,14 +52,11 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   logger.info('delete, user:', user)
   logger.info('delete, blog:', blog)
 
-  if(blog.user === null){
-    return
-  }
   const result = await Blog.findByIdAndRemove(request.params.id)
   logger.info('Blog deleted: ', result)
 
   //Remove blog from users blog list
-  const userBlogs = await User.findById(user.id)
+  const userBlogs = await User.findById(user._id)
   const updatedBlogs = userBlogs.toSpliced(userBlogs.find(blog.id), 1)
   await User.findByIdAndUpdate(user.id, updatedBlogs)
 
