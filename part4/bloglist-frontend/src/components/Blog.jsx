@@ -1,4 +1,4 @@
-import Togglable from "./Togglable"
+import Togglable from './Togglable'
 import { useState } from 'react'
 
 const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
@@ -13,7 +13,7 @@ const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
 
   const addLike = (event) => {
     event.preventDefault()
-    
+
     console.log(blog)
     let updatedBlog = { ...blog }
     console.log(updatedBlog)
@@ -35,7 +35,7 @@ const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
     <div style={blogStyle}>
       {/* <Togglable buttonLabel="view more" text={`"${blog.title}" by ${blog.author}`}> */}
       <Togglable text={`"${blog.title}" by ${blog.author}`} buttonLabel='show more' cancelLabel='show less'>
-        "{blog.title}" by {blog.author}
+        {`"${blog.title}" by ${blog.author}`}
         <div>
           URL: {blog.url}
         </div>
@@ -44,13 +44,13 @@ const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
           <button onClick={addLike}>Like</button>
         </div>
         <div>
-          Added by: {blog.user ? blog.user.username : "name not known, this is probably default or test blog"}
+          Added by: {blog.user ? blog.user.username : 'name not known, this is probably default or test blog'}
         </div>
         <div>
           <button onClick={deleteBlog}>Delete blog</button>
         </div>
       </Togglable>
-    </div>  
+    </div>
   )
 }
 
