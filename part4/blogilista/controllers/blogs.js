@@ -15,7 +15,7 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   const blog = new Blog(request.body)
 
   const user = request.user
-  blog.user = user._id
+  blog.user = user.id
 
   logger.info('blog in blogsRouter/post', blog)
 
@@ -30,7 +30,7 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const blog = new Blog(request.body)
 
   const user = request.user
-  blog.user = user._id
+  blog.user = user.id
   logger.info('blog in blogsRouter/put', blog)
 
   //TODO move checking to model after I learn how to actually make it work
@@ -56,9 +56,13 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   logger.info('Blog deleted: ', result)
 
   //Remove blog from users blog list
-  const userBlogs = await User.findById(user._id)
-  const updatedBlogs = userBlogs.toSpliced(userBlogs.find(blog.id), 1)
-  await User.findByIdAndUpdate(user.id, updatedBlogs)
+  let oldUserData = await User.findById(user.id)
+  logger.info('old user blogs', oldUserData.blogs)
+  const updatedBlogs = oldUserData.blogs.toSpliced(oldUserData.blogs.indexOf(blog._id), 1)
+  logger.info('updated user blogs', updatedBlogs)
+  oldUserData.blogs = updatedBlogs
+  logger.info('updated user', oldUserData)
+  await User.findByIdAndUpdate(user.id, oldUserData)
 
   response.status(204).json(result)
 })
