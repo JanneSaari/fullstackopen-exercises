@@ -29,12 +29,12 @@ const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
     }
   }
 
-  console.log(blog.user)
+  // console.log(blog.user)
 
   return (
     <div style={blogStyle}>
       {/* <Togglable buttonLabel="view more" text={`"${blog.title}" by ${blog.author}`}> */}
-      <Togglable text={`"${blog.title}" by ${blog.author}`} buttonLabel='show more' cancelLabel='show less'>
+      <Togglable id='blog-element' text={`"${blog.title}" by ${blog.author}`} buttonLabel='show more' cancelLabel='show less'>
         {`"${blog.title}" by ${blog.author}`}
         <div>
           URL: {blog.url}
