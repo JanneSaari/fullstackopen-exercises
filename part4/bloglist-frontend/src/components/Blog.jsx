@@ -41,7 +41,7 @@ const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
         </div>
         <div>
           Likes: {blog.likes}
-          <button onClick={addLike}>Like</button>
+          <button id='like-blog-btn' onClick={addLike}>Like</button>
         </div>
         <div>
           Added by: {blog.user ? blog.user.username : 'name not known, this is probably default or test blog'}

@@ -18,10 +18,12 @@ describe('Blog rendering', () => {
   let blogTitleElement
   let likesElement //Invisible elements are still defined even though they are not showing
   let urlElement
+  let mockHandler
 
   beforeEach(() => {
+    mockHandler = jest.fn()
     container =
-    render(<Blog id='test-element' blog={blog} />)
+    render(<Blog id='test-element' blog={blog} updateBlogFn={mockHandler} />)
       .container
     blogTitleElement = container.querySelector('#test-element')
     likesElement = screen.getByText(`likes: ${blog.likes}`, { exact: false })
@@ -42,5 +44,15 @@ describe('Blog rendering', () => {
     expect(blogTitleElement).toBeDefined()
     expect(likesElement).toBeVisible()
     expect(urlElement).toBeVisible()
+  })
+
+  test('Clicking likes button twice calls function twice', async () => {
+    const user = userEvent.setup()
+    const likeBtn = container.querySelector('#like-blog-btn')
+    expect(likeBtn).toBeDefined()
+    await user.click(likeBtn)
+    await user.click(likeBtn)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })
