@@ -13,4 +13,21 @@ describe('Blog App', function() {
   it('Login form is shown', function() {
     cy.contains('Login')
   })
+
+  describe('Login',function() {
+    it('succeeds with correct credentials', function() {
+      cy.get('#username').type('root')
+      cy.get('#password').type('sekret')
+      cy.get('#login-btn').click()
+      cy.contains('root has logged in')
+    })
+
+    it('fails with wrong credentials', function() {
+      cy.get('#username').type('qewqw')
+      cy.get('#password').type('fdfsfd')
+      cy.get('#login-btn').click()
+      cy.contains('wrong credentials')
+      cy.should('not.contain', 'root has logged in')
+    })
+  })
 })
