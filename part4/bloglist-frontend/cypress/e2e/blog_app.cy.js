@@ -10,7 +10,7 @@ describe('Blog App', function() {
     cy.visit('http://localhost:5173')
   })
 
-  it('Login form is shown', function() {
+  it('Login form is shown by default', function() {
     cy.contains('Login')
   })
 
@@ -28,6 +28,30 @@ describe('Blog App', function() {
       cy.get('#login-btn').click()
       cy.contains('wrong credentials')
       cy.should('not.contain', 'root has logged in')
+    })
+  })
+
+  describe('When logged in', function() {
+    beforeEach( function() {
+      cy.request('POST', 'http://localhost:3001/api/login', {
+        username: 'root',
+        password: 'sekret'
+      })
+        .then(response => {
+          localStorage.setItem('loggedAppUser',
+            JSON.stringify(response.body))
+          cy.visit('http://localhost:5173')
+        })
+    })
+    it('Blog can be created', function() {
+      cy.contains('new blog').click()
+
+      cy.get('#title-field').type('testTitle')
+      cy.get('#author-field').type('testAuthor')
+      cy.get('#url-field').type('testURL')
+      cy.get('#add-blog-btn').click()
+
+      cy.get('.blog-element').contains('"testTitle" by testAuthor')
     })
   })
 })

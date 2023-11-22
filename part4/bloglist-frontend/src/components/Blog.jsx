@@ -32,8 +32,7 @@ const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
   // console.log(blog.user)
 
   return (
-    <div style={blogStyle}>
-      {/* <Togglable buttonLabel="view more" text={`"${blog.title}" by ${blog.author}`}> */}
+    <div className='blog-element' style={blogStyle}>
       <Togglable id='blog-element' text={`"${blog.title}" by ${blog.author}`} buttonLabel='show more' cancelLabel='show less'>
         {`"${blog.title}" by ${blog.author}`}
         <div>
