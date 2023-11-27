@@ -33,14 +33,14 @@ const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
 
   return (
     <div className='blog-element' style={blogStyle}>
-      <Togglable id='blog-element' text={`"${blog.title}" by ${blog.author}`} buttonLabel='show more' cancelLabel='show less'>
+      <Togglable text={`"${blog.title}" by ${blog.author}`} buttonLabel='show more' cancelLabel='show less'>
         {`"${blog.title}" by ${blog.author}`}
         <div>
           URL: {blog.url}
         </div>
-        <div>
+        <div className='likes-element'>
           Likes: {blog.likes}
-          <button id='like-blog-btn' onClick={addLike}>Like</button>
+          <button className='like-blog-btn' onClick={addLike}>Like</button>
         </div>
         <div>
           Added by: {blog.user ? blog.user.username : 'name not known, this is probably default or test blog'}

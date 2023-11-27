@@ -43,6 +43,7 @@ describe('Blog App', function() {
           cy.visit('http://localhost:5173')
         })
     })
+
     it('Blog can be created', function() {
       cy.contains('new blog').click()
 
@@ -51,7 +52,24 @@ describe('Blog App', function() {
       cy.get('#url-field').type('testURL')
       cy.get('#add-blog-btn').click()
 
-      cy.get('.blog-element').contains('"testTitle" by testAuthor')
+      cy.contains('"testTitle" by testAuthor')
+    })
+
+    it('Blog can be liked', function() {
+      cy.contains('new blog').click()
+
+      cy.get('#title-field').type('testTitle')
+      cy.get('#author-field').type('testAuthor')
+      cy.get('#url-field').type('testURL')
+      cy.get('#add-blog-btn').click()
+
+      cy.get('.blog-element').as('blog').contains('"testTitle" by testAuthor').click()
+
+      cy.get('@blog').get('.likes-element').should('contain', 'Likes: 0')
+      cy.get('@blog').get('.like-blog-btn').click()
+      cy.get('@blog').get('.likes-element').should('contain', 'Likes: 1')
+      cy.get('@blog').get('.like-blog-btn').click()
+      cy.get('@blog').get('.likes-element').should('contain', 'Likes: 2')
     })
   })
 })
