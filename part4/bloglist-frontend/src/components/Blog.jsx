@@ -1,7 +1,7 @@
 import Togglable from './Togglable'
 import { useState } from 'react'
 
-const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
+const Blog = ({ blog, currentUsername, updateBlogFn, deleteBlogFn }) => {
 
   const blogStyle = {
     paddingTop: 10,
@@ -29,7 +29,7 @@ const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
     }
   }
 
-  // console.log(blog.user)
+  console.log(blog.user)
 
   return (
     <div className='blog-element' style={blogStyle}>
@@ -45,9 +45,11 @@ const Blog = ({ blog, updateBlogFn, deleteBlogFn }) => {
         <div>
           Added by: {blog.user ? blog.user.username : 'name not known, this is probably default or test blog'}
         </div>
-        <div>
-          <button onClick={deleteBlog}>Delete blog</button>
-        </div>
+        {blog.user.username === currentUsername ?
+          <div>
+            <button onClick={deleteBlog}>Delete blog</button>
+          </div>
+          : ''}
       </Togglable>
     </div>
   )
