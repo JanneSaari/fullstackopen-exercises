@@ -1,33 +1,22 @@
-import { useSelector, useDispatch } from "react-redux"
-import { removeNotification } from '../reducers/notificationReducer'
+import { useSelector } from "react-redux"
 
 const Notification = () => {
   const notifications = useSelector(state => state.notifications)
-  const dispatch = useDispatch()
 
   const style = {
     border: 'solid',
     padding: 10,
-    borderWidth: 1
+    borderWidth: 1,
+    visibility: notifications ? 'visible' : 'hidden'
   }
 
-  console.log(notifications)
-
-  const closeNotification = (event) => {
-    event.preventDefault()
-    const content = event.target.parentElement.id
-    console.log(content)
-    dispatch(removeNotification(content))
-  }
+  console.log('notification', notifications)
 
   return (
     <div>
-      {notifications.map(notification =>
-        <div id={notification.id} key={notification.id} style={style}>
-          {notification.content}
-          <button onClick={closeNotification}>Close</button>
-        </div>
-      )}
+      <div style={style}>
+        {notifications}
+      </div>
     </div>
   )
 }
