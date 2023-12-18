@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { addVoteFor } from '../reducers/anecdoteReducer'
+import { voteFor } from '../reducers/anecdoteReducer'
 import { addNotification, removeNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
@@ -9,7 +9,7 @@ const AnecdoteList = () => {
 
   const vote = (id) => {
     console.log('vote', id)
-    dispatch(addVoteFor(id))
+    dispatch(voteFor(id))
     dispatch(addNotification(`You voted blog: ${id}`))
     setTimeout(() => {
       dispatch(removeNotification())
