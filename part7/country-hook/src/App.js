@@ -17,14 +17,44 @@ const useField = (type) => {
 
 const useCountry = (name) => {
   const [country, setCountry] = useState(null)
+  const [found, setFound] = useState(null)
+  const baseUrl = 'https://studies.cs.helsinki.fi/restcountries/api'
 
-  useEffect(() => {})
+  useEffect(() => {
+      const queryUrl = `${baseUrl}/name/${name}`
+      axios
+        .get(queryUrl)
+        .then(resp => {
+          console.log('resp: ', resp)
+          const data = resp.data
+          setCountry({
+            name: data.name.common,
+            capital: data.capital[0],
+            population: data.population,
+            flag: data.flags.png
+          })
+          console.log('country: ', country)
+          if(resp.status === 200)
+            setFound(true)
+          if(resp.status === 404)
+            setFound(false)
+        })
+        .catch(error => {
+          console.log(error)
+          setFound(false)
+          setCountry(null)
+          console.log('found: ', found)
+          console.log('country: ', country)
+        })
+  }, [name])
 
-  return country
+  return { data: country, found }
 }
 
 const Country = ({ country }) => {
+  console.log(country)
   if (!country) {
+    console.log('returning null')
     return null
   }
 
