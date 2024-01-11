@@ -1,27 +1,31 @@
 import { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
+
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+
 import { setNotification } from "./reducers/notificationReducer";
-import { useDispatch } from "react-redux";
+import blogReducer, {initializeBlogs, addBlog} from "./reducers/blogReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
-
+  
+  const blogs = useSelector(state => state.blogs)
   const dispatch = useDispatch()
-
+  
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    dispatch(initializeBlogs())
   }, []);
-
+  
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedAppUser");
     if (loggedUserJSON) {
@@ -68,13 +72,9 @@ const App = () => {
 
     blogFormRef.current.toggleVisibility();
     console.log(newBlog);
-    await blogService.addBlog(newBlog);
 
+    dispatch(addBlog(newBlog))
     dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`));
-    // setIsNotificationError(false);
-
-    const foo = await blogService.getAll();
-    setBlogs(foo);
   };
 
   const updateBlog = async (updatedBlog) => {
@@ -83,7 +83,6 @@ const App = () => {
     await blogService.updateBlog(newBlog);
 
     dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} updated`))
-    // setIsNotificationError(false);
 
     const foo = await blogService.getAll();
     setBlogs(foo);
@@ -93,14 +92,7 @@ const App = () => {
     await blogService.deleteBlog(blog);
 
     dispatch(setNotification(`Blog "${blog.title}" by ${blog.author} deleted`))
-    // setIsNotificationError(true);
 
-    const foo = await blogService.getAll();
-    setBlogs(foo);
-    // await updateBlogList()
-  };
-
-  const updateBlogList = async () => {
     const foo = await blogService.getAll();
     setBlogs(foo);
   };
@@ -136,15 +128,17 @@ const App = () => {
     </div>
   );
 
-  const blogList = () => (
+  const blogList = () => {
+    console.log('Blogs: ', blogs)
+    return (
     <div>
       <h2>blogs</h2>
       {console.log(user)}
       {blogs
-        .sort((a, b) => {
-          console.log("sorting", a, b);
+        .toSorted((a, b) => {
+          // console.log("sorting", a, b);
           const result = a.likes <= b.likes;
-          console.log(result);
+          // console.log(result);
           return result;
         })
         .map((blog) => (
@@ -157,7 +151,7 @@ const App = () => {
           />
         ))}
     </div>
-  );
+  )};
 
   return (
     <div>

@@ -28,7 +28,7 @@ const Blog = ({ blog, currentUsername, updateBlogFn, deleteBlogFn }) => {
     }
   };
 
-  console.log(blog.user);
+  // console.log(blog.user);
 
   return (
     <div className="blog-element" style={blogStyle}>
