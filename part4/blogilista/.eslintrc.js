@@ -6,7 +6,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: "eslint:recommended",
+  extends: ["eslint:recommended"],
   overrides: [
     {
       env: {
@@ -31,4 +31,5 @@ module.exports = {
     "object-curly-spacing": ["error", "always"],
     "arrow-spacing": ["error", { before: true, after: true }],
   },
+  extends: "prettier"
 };
