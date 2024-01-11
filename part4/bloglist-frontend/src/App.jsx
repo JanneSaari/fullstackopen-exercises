@@ -5,16 +5,18 @@ import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import { setNotification } from "./reducers/notificationReducer";
+import { useDispatch } from "react-redux";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState(null);
-  const [isNotificationError, setIsNotificationError] = useState(false);
 
   const blogFormRef = useRef();
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -43,12 +45,8 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setNotification("wrong credentials");
-      setIsNotificationError(true);
-      setTimeout(() => {
-        setNotification(null);
-        setIsNotificationError(false);
-      }, 5000);
+      dispatch(setNotification("wrong credentials"))
+      console.log("testing")
     }
   };
 
@@ -57,12 +55,7 @@ const App = () => {
     console.log("logging user out", user.username);
     blogService.setToken(null);
     window.localStorage.removeItem("loggedAppUser");
-    setNotification(`User ${user.username} is logged out`);
-    setIsNotificationError(false);
-    setTimeout(() => {
-      setNotification(null);
-      setIsNotificationError(false);
-    }, 5000);
+    dispatch(setNotification(`User ${user.username} is logged out`))
     setUser(null);
   };
 
@@ -77,8 +70,8 @@ const App = () => {
     console.log(newBlog);
     await blogService.addBlog(newBlog);
 
-    setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`);
-    setIsNotificationError(false);
+    dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`));
+    // setIsNotificationError(false);
 
     const foo = await blogService.getAll();
     setBlogs(foo);
@@ -89,8 +82,8 @@ const App = () => {
     console.log(newBlog);
     await blogService.updateBlog(newBlog);
 
-    setNotification(`Blog "${newBlog.title}" by ${newBlog.author} updated`);
-    setIsNotificationError(false);
+    dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} updated`))
+    // setIsNotificationError(false);
 
     const foo = await blogService.getAll();
     setBlogs(foo);
@@ -99,8 +92,8 @@ const App = () => {
   const deleteBlog = async (blog) => {
     await blogService.deleteBlog(blog);
 
-    setNotification(`Blog "${blog.title}" by ${blog.author} deleted`);
-    setIsNotificationError(true);
+    dispatch(setNotification(`Blog "${blog.title}" by ${blog.author} deleted`))
+    // setIsNotificationError(true);
 
     const foo = await blogService.getAll();
     setBlogs(foo);
@@ -168,7 +161,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={notification} isError={isNotificationError} />
+      <Notification/>
       {!user && loginForm()}
       {user && (
         <p>
