@@ -2,9 +2,9 @@ import Togglable from "./Togglable";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux"
 
-import { updateBlog } from "../reducers/blogReducer";
+import { updateBlog, deleteBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, currentUsername, deleteBlogFn }) => {
+const Blog = ({ blog, currentUsername}) => {
   const dispatch = useDispatch()
 
   const blogStyle = {
@@ -25,10 +25,10 @@ const Blog = ({ blog, currentUsername, deleteBlogFn }) => {
     dispatch(updateBlog(updatedBlog))
   };
 
-  const deleteBlog = (event) => {
+  const deleteFn = (event) => {
     event.preventDefault();
     if (window.confirm(`Delete blog ${blog.title} by ${blog.author}?`)) {
-      deleteBlogFn(blog);
+      dispatch(deleteBlog(blog))
     }
   };
 
@@ -57,7 +57,7 @@ const Blog = ({ blog, currentUsername, deleteBlogFn }) => {
         </div>
         {blog.user.username === currentUsername ? (
           <div>
-            <button onClick={deleteBlog}>Delete blog</button>
+            <button onClick={deleteFn}>Delete blog</button>
           </div>
         ) : (
           ""

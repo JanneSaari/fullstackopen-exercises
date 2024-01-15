@@ -77,26 +77,6 @@ const App = () => {
     dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`));
   };
 
-  // const updateBlog = async (updatedBlog) => {
-  //   const newBlog = { ...updatedBlog };
-  //   console.log(newBlog);
-  //   await blogService.updateBlog(newBlog);
-
-  //   dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} updated`))
-
-  //   const foo = await blogService.getAll();
-  //   setBlogs(foo);
-  // };
-
-  const deleteBlog = async (blog) => {
-    await blogService.deleteBlog(blog);
-
-    dispatch(setNotification(`Blog "${blog.title}" by ${blog.author} deleted`))
-
-    const foo = await blogService.getAll();
-    setBlogs(foo);
-  };
-
   const loginForm = () => (
     <div>
       <h2>Login</h2>
@@ -145,7 +125,6 @@ const App = () => {
             key={blog.id}
             blog={blog}
             currentUsername={user.username}
-            deleteBlogFn={deleteBlog}
           />
         ))}
     </div>
