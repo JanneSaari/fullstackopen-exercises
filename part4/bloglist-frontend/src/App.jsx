@@ -10,7 +10,7 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 import { setNotification } from "./reducers/notificationReducer";
-import blogReducer, {initializeBlogs, addBlog} from "./reducers/blogReducer";
+import blogReducer, {initializeBlogs, addBlog } from "./reducers/blogReducer";
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -77,16 +77,16 @@ const App = () => {
     dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`));
   };
 
-  const updateBlog = async (updatedBlog) => {
-    const newBlog = { ...updatedBlog };
-    console.log(newBlog);
-    await blogService.updateBlog(newBlog);
+  // const updateBlog = async (updatedBlog) => {
+  //   const newBlog = { ...updatedBlog };
+  //   console.log(newBlog);
+  //   await blogService.updateBlog(newBlog);
 
-    dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} updated`))
+  //   dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} updated`))
 
-    const foo = await blogService.getAll();
-    setBlogs(foo);
-  };
+  //   const foo = await blogService.getAll();
+  //   setBlogs(foo);
+  // };
 
   const deleteBlog = async (blog) => {
     await blogService.deleteBlog(blog);
@@ -133,7 +133,6 @@ const App = () => {
     return (
     <div>
       <h2>blogs</h2>
-      {console.log(user)}
       {blogs
         .toSorted((a, b) => {
           // console.log("sorting", a, b);
@@ -146,7 +145,6 @@ const App = () => {
             key={blog.id}
             blog={blog}
             currentUsername={user.username}
-            updateBlogFn={updateBlog}
             deleteBlogFn={deleteBlog}
           />
         ))}

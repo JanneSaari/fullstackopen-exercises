@@ -1,7 +1,12 @@
 import Togglable from "./Togglable";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux"
 
-const Blog = ({ blog, currentUsername, updateBlogFn, deleteBlogFn }) => {
+import { updateBlog } from "../reducers/blogReducer";
+
+const Blog = ({ blog, currentUsername, deleteBlogFn }) => {
+  const dispatch = useDispatch()
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -13,12 +18,11 @@ const Blog = ({ blog, currentUsername, updateBlogFn, deleteBlogFn }) => {
   const addLike = (event) => {
     event.preventDefault();
 
-    console.log(blog);
     let updatedBlog = { ...blog };
-    console.log(updatedBlog);
+    console.log("blog to update: ", updatedBlog);
     updatedBlog.likes = updatedBlog.likes + 1;
-    console.log(updatedBlog);
-    updateBlogFn(updatedBlog);
+    console.log("updated blog: ", updatedBlog);
+    dispatch(updateBlog(updatedBlog))
   };
 
   const deleteBlog = (event) => {
