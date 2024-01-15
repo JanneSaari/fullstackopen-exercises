@@ -11,15 +11,16 @@ import loginService from "./services/login";
 
 import { setNotification } from "./reducers/notificationReducer";
 import blogReducer, {initializeBlogs, addBlog } from "./reducers/blogReducer";
+import userReducer, {setUser} from "./reducers/userReducer";
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
   
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
   const dispatch = useDispatch()
   
   useEffect(() => {
@@ -30,7 +31,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedAppUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      dispatch(setUser(user))
       blogService.setToken(user.token);
     }
   }, []);
@@ -45,7 +46,7 @@ const App = () => {
       });
       window.localStorage.setItem("loggedAppUser", JSON.stringify(user));
       blogService.setToken(user.token);
-      setUser(user);
+      dispatch(setUser(user))
       setUsername("");
       setPassword("");
     } catch (exception) {
@@ -60,7 +61,7 @@ const App = () => {
     blogService.setToken(null);
     window.localStorage.removeItem("loggedAppUser");
     dispatch(setNotification(`User ${user.username} is logged out`))
-    setUser(null);
+    dispatch(setUser(null));
   };
 
   const createBlog = async (blogObject) => {

@@ -1,6 +1,5 @@
 import Togglable from "./Togglable";
-import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux"
+import { useDispatch } from "react-redux"
 
 import { updateBlog, deleteBlog } from "../reducers/blogReducer";
 
@@ -31,8 +30,6 @@ const Blog = ({ blog, currentUsername}) => {
       dispatch(deleteBlog(blog))
     }
   };
-
-  // console.log(blog.user);
 
   return (
     <div className="blog-element" style={blogStyle}>
