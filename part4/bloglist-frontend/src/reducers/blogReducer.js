@@ -34,11 +34,6 @@ export const {
   removeBlog
 } = blogSlice.actions
 
-const getCurrentUser = () => {
-  const currentUser = useSelector(state => state.user)
-  return currentUser
-}
-
 export const initializeBlogs = () => {
   return async dispatch => {
     const blogs = useResource('/api/blogs')
@@ -48,11 +43,9 @@ export const initializeBlogs = () => {
 }
 
 export const addBlog = (newBlog) => {
-  const currentUser = useSelector(state => state.user)
   return async dispatch => {
     const blogs = useResource('/api/blogs')
     const resp = await blogs.addNew(newBlog)
-    console.log('currentUser: ', currentUser)
     dispatch(appendBlog(resp))
   }
 }
