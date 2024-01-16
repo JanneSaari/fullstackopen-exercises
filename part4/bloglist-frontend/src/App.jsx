@@ -1,13 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link
+} from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
+import Users from "./components/Users";
 
-import blogService from "./services/blogs";
 import loginService from "./services/login";
+import useResource from "./services/resource";
 
 import { setNotification } from "./reducers/notificationReducer";
 import blogReducer, {initializeBlogs, addBlog } from "./reducers/blogReducer";
@@ -20,8 +26,17 @@ const App = () => {
   const blogFormRef = useRef();
   
   const blogs = useSelector(state => state.blogs)
-  const user = useSelector(state => state.user)
+  const currentUser = useSelector(state => state.user)
   const dispatch = useDispatch()
+
+  const blogService = useResource('/api/blogs')
+  const usersService = useResource('/api/users')
+
+  const users = useQuery({
+    queryKey: ['users'],
+    queryFn: usersService.getAll
+  })
+  // console.log(JSON.parse(JSON.stringify(users)))
   
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -32,6 +47,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       dispatch(setUser(user))
+      console.log('user: ', user)
       blogService.setToken(user.token);
     }
   }, []);
@@ -57,10 +73,10 @@ const App = () => {
 
   const handleLogout = async (event) => {
     event.preventDefault();
-    console.log("logging user out", user.username);
+    console.log("logging user out", currentUser.username);
     blogService.setToken(null);
     window.localStorage.removeItem("loggedAppUser");
-    dispatch(setNotification(`User ${user.username} is logged out`))
+    dispatch(setNotification(`User ${currentUser.username} is logged out`))
     dispatch(setUser(null));
   };
 
@@ -72,7 +88,7 @@ const App = () => {
     };
 
     blogFormRef.current.toggleVisibility();
-    console.log(newBlog);
+    console.log('new blog', newBlog);
 
     dispatch(addBlog(newBlog))
     dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`));
@@ -125,7 +141,7 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            currentUsername={user.username}
+            currentUsername={currentUser.username}
           />
         ))}
     </div>
@@ -134,16 +150,17 @@ const App = () => {
   return (
     <div>
       <Notification/>
-      {!user && loginForm()}
-      {user && (
+      {console.log('currentUser: ', currentUser)}
+      {!currentUser && loginForm()}
+      {currentUser && (
         <p>
-          {user.username} has logged in{" "}
+          {currentUser.username} has logged in{" "}
           <button type="button" onClick={handleLogout}>
             Logout
           </button>
         </p>
       )}
-      {user && (
+      {currentUser && (
         <Togglable
           buttonLabel="new blog"
           cancelLabel="show less"
@@ -152,7 +169,10 @@ const App = () => {
           <BlogForm createBlog={createBlog} />
         </Togglable>
       )}
-      {user && blogList()}
+      <Routes>
+        {/* <Route path="users" element={<Users users={users}/>} /> */}
+      </Routes>
+      {currentUser && blogList()}
     </div>
   );
 };

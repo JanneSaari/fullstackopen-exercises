@@ -1,5 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit"
-import blogs from "../services/blogs"
+import { createSlice } from '@reduxjs/toolkit'
+import useResource from '../services/resource'
+import { useSelector } from 'react-redux'
 
 const blogSlice = createSlice({
   name: 'blogs',
@@ -14,8 +15,6 @@ const blogSlice = createSlice({
     setBlog(state, action){
       console.log('state: ', state)
       const id = action.payload.id
-      const blogToUpdate = state.find(blog =>
-        blog.id === id)
       const updatedBlog = { ...action.payload }
       return state.map(blog => {
         return blog.id !== id ? blog : updatedBlog
@@ -35,29 +34,41 @@ export const {
   removeBlog
 } = blogSlice.actions
 
+const getCurrentUser = () => {
+  const currentUser = useSelector(state => state.user)
+  return currentUser
+}
+
 export const initializeBlogs = () => {
   return async dispatch => {
+    const blogs = useResource('/api/blogs')
     const content = await blogs.getAll()
     dispatch(setBlogs(content))
   }
 }
 
 export const addBlog = (newBlog) => {
+  const currentUser = useSelector(state => state.user)
   return async dispatch => {
-    const resp = await blogs.addBlog(newBlog)
+    const blogs = useResource('/api/blogs')
+    const resp = await blogs.addNew(newBlog)
+    console.log('currentUser: ', currentUser)
     dispatch(appendBlog(resp))
   }
 }
 export const updateBlog = (updatedBlog) => {
   return async dispatch => {
-    const resp = await blogs.updateBlog(updatedBlog)
+    const blogs = useResource('/api/blogs')
+    const resp = await blogs.update(updatedBlog)
+    console.log('response: ', resp)
     dispatch(setBlog(resp))
   }
 }
 
 export const deleteBlog = (blog) => {
   return async dispatch => {
-    const resp = await blogs.deleteBlog(blog)
+    const blogs = useResource('/api/blogs')
+    const resp = await blogs.remove(blog)
     dispatch(removeBlog(blog))
   }
 }
