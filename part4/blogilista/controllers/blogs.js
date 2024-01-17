@@ -70,4 +70,21 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   response.status(204).json(result)
 })
 
+blogsRouter.get('/:id/comments', async (request, response) => {
+  const blogs = await Blog.find({})
+  const comments = blogs.comments
+  response.json(comments)
+})
+
+
+blogsRouter.put('/:id/comments', userExtractor, async (request, response) => {
+  const comment = new Blog(request.body)
+
+  let updatedBlog = await Blog.findById(request.params.id)
+  updatedBlog.comments.push(comment)
+  await updatedBlog.save()
+  response.json(updatedBlog)
+})
+
+
 module.exports = blogsRouter
