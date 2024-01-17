@@ -1,28 +1,31 @@
 import Togglable from "./Togglable";
 import { useDispatch, useSelector } from "react-redux"
 import { updateBlog, deleteBlog } from "../reducers/blogReducer";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-const Blog = ({ blog }) => {
+const SingleBlogView = ({ blogs }) => {
   const dispatch = useDispatch()
+  const id = useParams().id
   const currentUser = useSelector(state => state.currentUser)
+  
+  const blog = blogs.find(blog => blog.id === id)
+  if(!blog){
+    return (
+      <div>Couldn't find blog with this id</div>
+    )
+  }
+  if(!currentUser){
+    return (
+      <div>Loading...</div>
+    )
+  }
   const currentUsername = currentUser.username
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
 
   const addLike = (event) => {
     event.preventDefault();
-
     let updatedBlog = { ...blog };
-    console.log("blog to update: ", updatedBlog);
     updatedBlog.likes = updatedBlog.likes + 1;
-    console.log("updated blog: ", updatedBlog);
     dispatch(updateBlog(updatedBlog))
   };
 
@@ -34,15 +37,10 @@ const Blog = ({ blog }) => {
   };
 
   return (
-    <div className="blog-element" style={blogStyle}>
-      <Togglable
-        text={`"${blog.title}" by ${blog.author}`}
-        buttonLabel="show more"
-        cancelLabel="show less"
-      >
-        <Link to={`/blogs/${blog.id}`}>
+    <div className="blog-element">
+        <div>
           {`"${blog.title}" by ${blog.author}`}
-        </Link>
+        </div>
         <div>URL: {blog.url}</div>
         <div className="likes-element">
           Likes: {blog.likes}
@@ -63,9 +61,8 @@ const Blog = ({ blog }) => {
         ) : (
           ""
         )}
-      </Togglable>
     </div>
   );
 };
 
-export default Blog;
+export default SingleBlogView;

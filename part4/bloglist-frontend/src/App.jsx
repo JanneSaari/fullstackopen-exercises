@@ -20,6 +20,7 @@ import useResource from "./services/resource";
 import { setNotification } from "./reducers/notificationReducer";
 import blogReducer, {initializeBlogs, addBlog } from "./reducers/blogReducer";
 import userReducer, {setUser} from "./reducers/currentUserReducer";
+import SingleBlogView from "./components/SingleBlogView";
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -146,7 +147,6 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            currentUsername={currentUser.username}
           />
         ))}
     </div>
@@ -177,6 +177,7 @@ const App = () => {
       <Routes>
         <Route path="/users" element={<Users users={users}/>} />
         <Route path="/users/:id" element={<User users={users}/>}></Route>
+        <Route path="/blogs/:id" element={<SingleBlogView blogs={blogs}/>}></Route>
         <Route path="/" element={currentUser && blogList()}/>
       </Routes>
      
