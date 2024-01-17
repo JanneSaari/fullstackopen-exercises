@@ -1,9 +1,15 @@
 const Users = ({ users }) => {
+  if(!users){
+    return (
+      <div>loading data...</div>
+    )
+  }
+
   return (
     <div>
       {users.map(user => {
         return (
-          <a>{user.name}</a>
+          <a key={user.id}>{user.name}</a>
         )}
       )}
     </div>

@@ -5,6 +5,7 @@ import {
   Routes, Route, Link
 } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import axios from "axios";
 
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
@@ -17,7 +18,7 @@ import useResource from "./services/resource";
 
 import { setNotification } from "./reducers/notificationReducer";
 import blogReducer, {initializeBlogs, addBlog } from "./reducers/blogReducer";
-import userReducer, {setUser} from "./reducers/userReducer";
+import userReducer, {setUser} from "./reducers/currentUserReducer";
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -26,18 +27,21 @@ const App = () => {
   const blogFormRef = useRef();
   
   const blogs = useSelector(state => state.blogs)
-  const currentUser = useSelector(state => state.user)
+  const currentUser = useSelector(state => state.currentUser)
   const dispatch = useDispatch()
 
   const blogService = useResource('/api/blogs')
   const usersService = useResource('/api/users')
 
-  const users = useQuery({
+  const usersQuery = useQuery({
     queryKey: ['users'],
-    queryFn: usersService.getAll
+    queryFn: () => axios.get('http://localhost:5173/api/users').then(res => res.data)
   })
-  // console.log(JSON.parse(JSON.stringify(users)))
-  
+  console.log('users: ', JSON.parse(JSON.stringify(usersQuery)))
+
+  const users = usersQuery.data
+  console.log(users)
+
   useEffect(() => {
     dispatch(initializeBlogs())
   }, []);
@@ -170,9 +174,10 @@ const App = () => {
         </Togglable>
       )}
       <Routes>
-        {/* <Route path="users" element={<Users users={users}/>} /> */}
+        <Route path="/users" element={<Users users={users}/>} />
+        <Route path="/" element={currentUser && blogList()}/>
       </Routes>
-      {currentUser && blogList()}
+     
     </div>
   );
 };
