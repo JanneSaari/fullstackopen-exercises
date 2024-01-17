@@ -1,14 +1,10 @@
-import Togglable from "./Togglable";
 import { useDispatch, useSelector } from "react-redux"
 import { updateBlog, deleteBlog } from "../reducers/blogReducer";
-import { useParams } from "react-router-dom";
 
-const SingleBlogView = ({ blogs }) => {
+const SingleBlogView = ({ blog }) => {
   const dispatch = useDispatch()
-  const id = useParams().id
   const currentUser = useSelector(state => state.currentUser)
   
-  const blog = blogs.find(blog => blog.id === id)
   if(!blog){
     return (
       <div>Couldn't find blog with this id</div>

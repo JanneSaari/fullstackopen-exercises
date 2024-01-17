@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import axios from "axios";
+import { useMatch } from "react-router-dom";
 
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
@@ -32,6 +33,11 @@ const App = () => {
   const currentUser = useSelector(state => state.currentUser)
   const dispatch = useDispatch()
 
+  const blogMatch = useMatch('blogs/:id')
+  const matchedBlog = blogMatch 
+    ? blogs.find(blog => blog.id === blogMatch.params.id)
+    : null
+
   const blogService = useResource('/api/blogs')
   const usersService = useResource('/api/users')
 
@@ -40,9 +46,17 @@ const App = () => {
     queryFn: () => axios.get('http://localhost:5173/api/users').then(res => res.data)
   })
   console.log('users: ', JSON.parse(JSON.stringify(usersQuery)))
-
-  const users = usersQuery.data
-  console.log(users)
+  let users
+  let matchedUser
+  const userMatch = useMatch('users/:id')
+  if(usersQuery.isSuccess)
+  {
+    users = usersQuery.data
+    matchedUser = userMatch
+    ? users.find(user => user.id === userMatch.params.id)
+    : null
+    console.log(users)
+  }
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -176,8 +190,8 @@ const App = () => {
       )}
       <Routes>
         <Route path="/users" element={<Users users={users}/>} />
-        <Route path="/users/:id" element={<User users={users}/>}></Route>
-        <Route path="/blogs/:id" element={<SingleBlogView blogs={blogs}/>}></Route>
+        <Route path="/users/:id" element={<User user={matchedUser}/>}></Route>
+        <Route path="/blogs/:id" element={<SingleBlogView blog={matchedBlog}/>}></Route>
         <Route path="/" element={currentUser && blogList()}/>
       </Routes>
      
