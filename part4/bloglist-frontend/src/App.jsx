@@ -12,6 +12,7 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import Users from "./components/Users";
+import User from "./components/User";
 
 import loginService from "./services/login";
 import useResource from "./services/resource";
@@ -175,6 +176,7 @@ const App = () => {
       )}
       <Routes>
         <Route path="/users" element={<Users users={users}/>} />
+        <Route path="/users/:id" element={<User users={users}/>}></Route>
         <Route path="/" element={currentUser && blogList()}/>
       </Routes>
      

@@ -23,7 +23,7 @@ const Users = ({ users }) => {
             {users.map(user =>
               <TableRow key={user.id}>
                 <TableCell>
-                  <Link to={'/'}>{user.name}</Link>
+                  <Link to={`/users/${user.id}`}>{user.name}</Link>
                 </TableCell>
                 <TableCell>
                   <a>{user.blogs.length}</a>
