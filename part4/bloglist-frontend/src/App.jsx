@@ -166,19 +166,28 @@ const App = () => {
     </div>
   )};
 
+  const padding = {
+    padding: 5
+  }
+
   return (
     <div>
+      <div>
+        <Link style={padding} to="/">home</Link>
+        <Link style={padding} to="/users">users</Link>
+        {currentUser
+          ? <span>
+              <em>{currentUser.username} has logged in </em>
+              <button type="button" onClick={handleLogout}>
+                Logout
+              </button>
+            </span>
+          : <Link style={padding} to='login'>login</Link>
+        }
+      </div>
       <Notification/>
       {console.log('currentUser: ', currentUser)}
       {!currentUser && loginForm()}
-      {currentUser && (
-        <p>
-          {currentUser.username} has logged in{" "}
-          <button type="button" onClick={handleLogout}>
-            Logout
-          </button>
-        </p>
-      )}
       {currentUser && (
         <Togglable
           buttonLabel="new blog"
