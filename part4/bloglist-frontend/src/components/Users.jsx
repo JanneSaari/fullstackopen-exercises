@@ -1,3 +1,6 @@
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
+import { Link } from "react-router-dom"
+
 const Users = ({ users }) => {
   if(!users){
     return (
@@ -7,11 +10,29 @@ const Users = ({ users }) => {
 
   return (
     <div>
-      {users.map(user => {
-        return (
-          <a key={user.id}>{user.name}</a>
-        )}
-      )}
+      <h2>Users</h2>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>User</TableCell>
+              <TableCell>Blogs Created</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map(user =>
+              <TableRow key={user.id}>
+                <TableCell>
+                  <Link to={'/'}>{user.name}</Link>
+                </TableCell>
+                <TableCell>
+                  <a>{user.blogs.length}</a>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }
