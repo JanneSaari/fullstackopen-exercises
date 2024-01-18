@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import useResource from '../services/resource'
-import { useSelector } from 'react-redux'
 
 const blogSlice = createSlice({
   name: 'blogs',
@@ -63,6 +62,21 @@ export const deleteBlog = (blog) => {
     const blogs = useResource('/api/blogs')
     const resp = await blogs.remove(blog)
     dispatch(removeBlog(blog))
+  }
+}
+
+export const addComment = (comment, blog) => {
+  return async dispatch => {
+    const comments = useResource(`/api/blogs/${blog.id}/comments`)
+    console.log('comment:', comment)
+    console.log('blog', blog)
+    const resp = await comments.addNew({ comment })
+    console.log('comment resp: ', resp)
+    let updatedBlog = { ...blog }
+    const updatedComments = [ ...updatedBlog.comments, comment]
+    updatedBlog.comments = updatedComments
+    console.log('updatedBlog: ', updatedBlog)
+    dispatch(setBlog(updatedBlog))
   }
 }
 

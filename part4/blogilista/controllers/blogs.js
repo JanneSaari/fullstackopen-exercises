@@ -77,8 +77,8 @@ blogsRouter.get('/:id/comments', async (request, response) => {
 })
 
 
-blogsRouter.put('/:id/comments', userExtractor, async (request, response) => {
-  const comment = new Blog(request.body)
+blogsRouter.post('/:id/comments', userExtractor, async (request, response) => {
+  const comment = request.body.comment
 
   let updatedBlog = await Blog.findById(request.params.id)
   updatedBlog.comments.push(comment)

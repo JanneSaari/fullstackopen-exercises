@@ -19,11 +19,10 @@ const useResource = (baseUrl) => {
   }
 
   const addNew = async (newResource) => {
-    console.log('token', token)
     const config = {
       headers: { Authorization: token },
     }
-    console.log(config)
+    console.log('adding: ', newResource)
     const response = await axios.post(baseUrl, newResource, config)
     console.log('response', response.data)
     return response.data

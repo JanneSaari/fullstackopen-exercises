@@ -1,7 +1,10 @@
 import { useDispatch, useSelector } from "react-redux"
-import { updateBlog, deleteBlog } from "../reducers/blogReducer";
+import { updateBlog, deleteBlog, addComment } from "../reducers/blogReducer";
+import { useState } from "react";
+import { List, ListItem, ListItemText } from "@mui/material"
 
 const SingleBlogView = ({ blog }) => {
+  const [comment, setComment] = useState('')
   const dispatch = useDispatch()
   const currentUser = useSelector(state => state.currentUser)
   
@@ -32,10 +35,17 @@ const SingleBlogView = ({ blog }) => {
     }
   };
 
+  const handleNewComment = (event) => {
+    event.preventDefault()
+    
+    dispatch(addComment(comment, blog))
+    setComment('')
+  }
+
   return (
     <div className="blog-element">
         <div>
-          {`"${blog.title}" by ${blog.author}`}
+          <h2>{`"${blog.title}" by ${blog.author}`}</h2>
         </div>
         <div>URL: {blog.url}</div>
         <div className="likes-element">
@@ -57,6 +67,28 @@ const SingleBlogView = ({ blog }) => {
         ) : (
           ""
         )}
+        <div>
+          <h3>Comments</h3>
+          <form onSubmit={handleNewComment}>
+              <input
+                id="newComment"
+                type="text"
+                value={comment}
+                name="Comment"
+                onChange={({ target }) => setComment(target.value)}
+              />
+            <button id="comment-btn" type="submit">
+              Add comment
+            </button>
+          </form>
+          <List>
+            {blog.comments.map(comment => 
+              <ListItem key={comment}>
+                <ListItemText primary={comment}/>
+              </ListItem>
+            )}
+          </List>
+        </div>
     </div>
   );
 };
