@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   BrowserRouter as Router,
-  Routes, Route, Link
+  Routes, Route, Link, Navigate
 } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import axios from "axios";
@@ -14,9 +14,7 @@ import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import Users from "./components/Users";
 import User from "./components/User";
-
-import loginService from "./services/login";
-import useResource from "./services/resource";
+import LoginForm from "./components/LoginForm";
 
 import { setNotification } from "./reducers/notificationReducer";
 import blogReducer, {initializeBlogs, addBlog } from "./reducers/blogReducer";
@@ -24,9 +22,6 @@ import userReducer, {setUser} from "./reducers/currentUserReducer";
 import SingleBlogView from "./components/SingleBlogView";
 
 const App = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
   const blogFormRef = useRef();
   
   const blogs = useSelector(state => state.blogs)
@@ -37,9 +32,6 @@ const App = () => {
   const matchedBlog = blogMatch 
     ? blogs.find(blog => blog.id === blogMatch.params.id)
     : null
-
-  const blogService = useResource('/api/blogs')
-  const usersService = useResource('/api/users')
 
   const usersQuery = useQuery({
     queryKey: ['users'],
@@ -68,33 +60,12 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON);
       dispatch(setUser(user))
       console.log('user: ', user)
-      blogService.setToken(user.token);
     }
   }, []);
-
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    console.log("logging in with", username, password);
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
-      window.localStorage.setItem("loggedAppUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-      dispatch(setUser(user))
-      setUsername("");
-      setPassword("");
-    } catch (exception) {
-      dispatch(setNotification("wrong credentials"))
-      console.log("testing")
-    }
-  };
 
   const handleLogout = async (event) => {
     event.preventDefault();
     console.log("logging user out", currentUser.username);
-    blogService.setToken(null);
     window.localStorage.removeItem("loggedAppUser");
     dispatch(setNotification(`User ${currentUser.username} is logged out`))
     dispatch(setUser(null));
@@ -113,37 +84,6 @@ const App = () => {
     dispatch(addBlog(newBlog))
     dispatch(setNotification(`Blog "${newBlog.title}" by ${newBlog.author} added`));
   };
-
-  const loginForm = () => (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
-            id="username"
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            id="password"
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button id="login-btn" type="submit">
-          login
-        </button>
-      </form>
-    </div>
-  );
 
   const blogList = () => {
     console.log('Blogs: ', blogs)
@@ -187,7 +127,6 @@ const App = () => {
       </div>
       <Notification/>
       {console.log('currentUser: ', currentUser)}
-      {!currentUser && loginForm()}
       {currentUser && (
         <Togglable
           buttonLabel="new blog"
@@ -201,7 +140,8 @@ const App = () => {
         <Route path="/users" element={<Users users={users}/>} />
         <Route path="/users/:id" element={<User user={matchedUser}/>}></Route>
         <Route path="/blogs/:id" element={<SingleBlogView blog={matchedBlog}/>}></Route>
-        <Route path="/" element={currentUser && blogList()}/>
+        <Route path="/" element={currentUser ? blogList() :  <LoginForm/>}/>
+        <Route path="/login" element={currentUser ? <Navigate replace to='/'/>: <LoginForm/>} />
       </Routes>
      
     </div>
