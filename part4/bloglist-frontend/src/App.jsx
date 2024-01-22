@@ -20,6 +20,8 @@ import { setNotification } from "./reducers/notificationReducer";
 import blogReducer, {initializeBlogs, addBlog } from "./reducers/blogReducer";
 import userReducer, {setUser} from "./reducers/currentUserReducer";
 import SingleBlogView from "./components/SingleBlogView";
+import { AppBar, Toolbar } from "@mui/material";
+import { Button } from "@mui/base";
 
 const App = () => {
   const blogFormRef = useRef();
@@ -112,29 +114,35 @@ const App = () => {
 
   return (
     <div>
-      <div>
-        <Link style={padding} to="/">home</Link>
-        <Link style={padding} to="/users">users</Link>
-        {currentUser
-          ? <span>
-              <em>{currentUser.username} has logged in </em>
-              <button type="button" onClick={handleLogout}>
-                Logout
-              </button>
-            </span>
-          : <Link style={padding} to='login'>login</Link>
-        }
-      </div>
+      <AppBar position="static">
+        <Toolbar>
+          <Button color="inherit" component={Link} to="/">Home</Button>
+          <Button color="inherit" component={Link} to="/users">Users</Button>
+          {/* <Link style={padding} to="/">home</Link> */}
+          {/* <Link style={padding} to="/users">users</Link> */}
+          {currentUser
+            ? <span>
+                <em>{currentUser.username} has logged in </em>
+                <Button color="inherit" onClick={handleLogout}>Logout</Button>
+                {/* <button type="button" onClick={handleLogout}>
+                  Logout
+                </button> */}
+              </span>
+            // : <Link style={padding} to='login'>login</Link>
+            : <Button color="inherit" component={Link}>Login</Button>
+          }
+        </Toolbar>
+      </AppBar>
       <Notification/>
       {console.log('currentUser: ', currentUser)}
       {currentUser && (
-        <Togglable
-          buttonLabel="new blog"
-          cancelLabel="show less"
-          ref={blogFormRef}
-        >
-          <BlogForm createBlog={createBlog} />
-        </Togglable>
+          <Togglable
+            buttonLabel="new blog"
+            cancelLabel="show less"
+            ref={blogFormRef}
+            >
+            <BlogForm createBlog={createBlog} />
+          </Togglable>
       )}
       <Routes>
         <Route path="/users" element={<Users users={users}/>} />
