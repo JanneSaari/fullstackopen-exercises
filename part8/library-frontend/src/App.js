@@ -10,7 +10,6 @@ const App = () => {
   const authorsQuery = useQuery(ALL_AUTHORS)
   const booksQuery = useQuery(ALL_BOOKS)
 
-  console.log(authorsQuery)
   return (
     <div>
       <div>
