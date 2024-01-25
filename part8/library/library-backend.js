@@ -57,26 +57,17 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    bookCount: async() => Book.collection.countDocuments(),
-    authorCount: async() => Author.collection.countDocuments(),
-    allBooks: async(root, args) => {
-      const books = await Book.find({ 
+    bookCount: async() => Book.countDocuments(),
+    authorCount: async() => Author.countDocuments(),
+    allBooks: async(root, args) => await Book.find({ 
         ...(args.author && {author: await Author.findOne({ name: args.author })}),
         ...(args.genre && {genres: args.genre})
       })
-      .populate('author')
-      
-      console.log('args,', args)
-      console.log('books: ', books)
-      return books
-    },
+      .populate('author'),
     allAuthors: async() => Author.find({}) 
   },
   Author: {
-    bookCount: (root) => 
-      books.reduce( (count, book ) =>
-        book.author === root.name ? count + 1 : count,
-        0)
+    bookCount: async (root) => Book.countDocuments({ author: root})
   },
   Mutation: {
     addBook: async(root, args) => {
