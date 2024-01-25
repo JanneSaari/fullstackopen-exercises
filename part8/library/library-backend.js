@@ -6,7 +6,9 @@ mongoose.set('strictQuery', false)
 require('dotenv').config()
 const Book = require('./models/Book')
 const Author = require('./models/Author')
+const User = require('./models/User')
 const { GraphQLError } = require('graphql')
+const jwt = require('jsonwebtoken')
 
 const MONGODB_URI = process.env.MONGODB_URI
 
@@ -21,6 +23,16 @@ mongoose.connect(MONGODB_URI)
   })
 
 const typeDefs = `
+  type User {
+    username: String!,
+    favoriteGenre: String!,
+    id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
   type Book {
     title: String!,
     published: Int!,
@@ -39,10 +51,19 @@ const typeDefs = `
     bookCount: Int!,
     authorCount: Int!,
     allBooks(author: String, genre: String): [Book!]!,
-    allAuthors: [Author!]!
+    allAuthors: [Author!]!,
+    me: User
   }
 
   type Mutation {
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
     addBook(
       title: String!,
       author: String!,
@@ -65,12 +86,45 @@ const resolvers = {
         ...(args.genre && {genres: args.genre})
       })
       .populate('author'),
-    allAuthors: async() => Author.find({}) 
+    allAuthors: async() => Author.find({}),
+    me: async() => {}
   },
   Author: {
     bookCount: async (root) => Book.countDocuments({ author: root})
   },
   Mutation: {
+    createUser: async(root, args) => {
+      const user = new User({ ...args })
+
+      return user.save()
+        .catch(error => {
+          throw new GraphQLError('Creating the user failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.name,
+              error
+            }
+          })
+        })
+    },
+    login: async(root, args) => {
+      const user = await User.findOne({ username: args.username })
+
+      if ( !user || args.password !== 'secret' ) {
+        throw new GraphQLError('wrong credentials', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
+          }
+        })        
+      }
+  
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      }
+  
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+    },
     addBook: async(root, args) => {
       const book = new Book({ ...args })
       let author = await Author.findOne({name: args.author})
