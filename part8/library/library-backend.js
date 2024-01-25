@@ -6,6 +6,7 @@ mongoose.set('strictQuery', false)
 require('dotenv').config()
 const Book = require('./models/Book')
 const Author = require('./models/Author')
+const { GraphQLError } = require('graphql')
 
 const MONGODB_URI = process.env.MONGODB_URI
 
@@ -74,17 +75,51 @@ const resolvers = {
       const book = new Book({ ...args })
       let author = await Author.findOne({name: args.author})
       if(!author){
-        const newAuthor = new Author({name: args.author})
-        author = await newAuthor.save()
+      try {
+          const newAuthor = new Author({name: args.author})
+          author = await newAuthor.save()
+        } catch (error) {
+          throw new GraphQLError('Adding new author failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.author,
+              error
+            }
+          })
+        }
       }
-      book.author = author
-      return book.save()
+      try {
+        book.author = author
+        await book.save()
+      } catch (error) {
+        throw new GraphQLError('Saving book failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title,
+            error
+          }
+        })
+      }
+      return book
     },
-    editAuthor: async(root, args) => 
-    Author.findOneAndUpdate({ name: args.name }, 
-      {
-        ...(args.setBornTo && {born: args.setBornTo})
-      }, {new: true})
+    editAuthor: async(root, args) => {
+      let updatedAuthor
+      try {
+        updatedAuthor = await Author.findOneAndUpdate({ name: args.name }, 
+          {
+            ...(args.setBornTo && {born: args.setBornTo})
+          }, {new: true})
+      } catch (error) {
+        throw new GraphQLError('Updating author failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
+      }
+      return updatedAuthor
+    }
   }
 }
 
