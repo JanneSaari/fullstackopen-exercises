@@ -80,17 +80,11 @@ const resolvers = {
       book.author = author
       return book.save()
     },
-    editAuthor: async(root, args) => {
-      let editedAuthor = authors.find(n => n.name === args.name)
-      if(!editedAuthor)
-        return null
-      if(args.setBornTo)
-        editedAuthor.born = args.setBornTo
-
-      authors = authors.map(author => 
-        author.name === editedAuthor.name ? editedAuthor : author)
-      return editedAuthor
-    }
+    editAuthor: async(root, args) => 
+    Author.findOneAndUpdate({ name: args.name }, 
+      {
+        ...(args.setBornTo && {born: args.setBornTo})
+      }, {new: true})
   }
 }
 
