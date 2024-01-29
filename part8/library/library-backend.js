@@ -87,7 +87,9 @@ const resolvers = {
       })
       .populate('author'),
     allAuthors: async() => Author.find({}),
-    me: async() => {}
+    me: async(root, args, context) => {
+      return context.currentUser
+    }
   },
   Author: {
     bookCount: async (root) => Book.countDocuments({ author: root})
@@ -125,7 +127,14 @@ const resolvers = {
   
       return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
     },
-    addBook: async(root, args) => {
+    addBook: async(root, args, context) => {
+      if(!context.currentUser){
+        throw new GraphQLError('User is not logged in, be sure to include authorization header with valid token', {
+          extensions: {
+            code: 'UNAUTHENTICATED'
+          }
+        })
+      }
       const book = new Book({ ...args })
       let author = await Author.findOne({name: args.author})
       if(!author){
@@ -156,7 +165,14 @@ const resolvers = {
       }
       return book
     },
-    editAuthor: async(root, args) => {
+    editAuthor: async(root, args, context) => {
+      if(!context.currentUser){
+        throw new GraphQLError('User is not logged in, be sure to include authorization header with valid token', {
+          extensions: {
+            code: 'UNAUTHENTICATED'
+          }
+        })
+      }
       let updatedAuthor
       try {
         updatedAuthor = await Author.findOneAndUpdate({ name: args.name }, 
@@ -184,6 +200,17 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
+  context: async ({ req, res }) => {
+    const auth = req ? req.headers.authorization : null
+    if (auth && auth.startsWith('Bearer ')) {
+      const decodedToken = jwt.verify(
+        auth.substring(7), process.env.JWT_SECRET
+      )
+      const currentUser = await User
+        .findById(decodedToken.id)
+      return { currentUser }
+    }
+  },
 }).then(({ url }) => {
   console.log(`Server ready at ${url}`)
 })
