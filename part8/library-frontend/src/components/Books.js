@@ -1,9 +1,11 @@
-const Books = (props) => {
-  if (!props.show) {
+const Books = ({show, books, allgenres, genreChoice, setGenreChoice}) => {
+
+  if (!show) {
     return null
   }
-
-  const books = props.books
+  
+  console.log('genres: ', allgenres)
+  console.log('genreChoises: ', genreChoice)
 
   return (
     <div>
@@ -25,6 +27,13 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
+      <div>
+        {allgenres.map((genre) => (
+          <button key={genre} onClick={() => setGenreChoice(genre)} value={genre}>{genre}</button>  
+          ))
+        }
+        <button onClick={() => setGenreChoice(null)}>all genres</button>
+      </div>
     </div>
   )
 }

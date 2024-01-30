@@ -9,8 +9,13 @@ import LoginForm from './components/LoginForm'
 const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)
+  const [genreChoice, setGenreChoice] = useState(null)
+  const [allGenres, setAllGenres] = useState([])
   const authorsQuery = useQuery(ALL_AUTHORS)
-  const booksQuery = useQuery(ALL_BOOKS)
+  const allBooksQuery = useQuery(ALL_BOOKS)
+  const genreBooksQuery = useQuery(ALL_BOOKS, {
+    variables: {genre: genreChoice}
+  })
   const client = useApolloClient()
 
   useEffect(() => {
@@ -20,6 +25,19 @@ const App = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if(allBooksQuery.loading){
+      return
+    }
+    let genres = []
+    allBooksQuery.data.allBooks.forEach(book => book.genres.forEach((genre) => {
+      if(!genres.includes(genre)){
+        genres.push(genre)
+      }
+    }))
+    setAllGenres(genres)
+  }, [allBooksQuery])
+
   const logout = () => {    
     console.log('logging out')
     setToken(null)
@@ -27,6 +45,8 @@ const App = () => {
     localStorage.clear()
     client.resetStore() 
   }
+
+  console.log('genres: ', genreChoice)
 
   return (
     <div>
@@ -52,9 +72,9 @@ const App = () => {
         ? <div>loading...</div>
         : <Authors show={page === 'authors'} authors={authorsQuery.data.allAuthors} />
       }
-      {booksQuery.loading
+      {genreBooksQuery.loading
         ? <div>loading...</div>
-        : <Books show={page === 'books'} books={booksQuery.data.allBooks} />
+        : <Books show={page === 'books'} books={genreBooksQuery.data.allBooks} allgenres={allGenres} genreChoice={genreChoice} setGenreChoice={setGenreChoice} />
       }
 
       <NewBook show={page === 'add'} />
