@@ -63,3 +63,13 @@ export const UPDATE_BIRTHYEAR = gql`
     }
   }
 `
+
+export const CURRENT_USER = gql`
+  query {
+    me{
+      username
+      favoriteGenre
+      id
+    }
+  }
+`

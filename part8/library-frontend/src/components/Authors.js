@@ -10,10 +10,6 @@ const Authors = (props) => {
     refetchQueries: [{query:ALL_AUTHORS}]
   })
 
-  if (!props.show) {
-    return null
-  }
-
   const authors = props.authors
 
   const updateBirthyear = (event) => {

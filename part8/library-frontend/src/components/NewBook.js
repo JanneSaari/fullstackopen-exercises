@@ -13,10 +13,6 @@ const NewBook = (props) => {
     refetchQueries: [ {query:ALL_AUTHORS}, {query:ALL_BOOKS}]
   })
 
-  if (!props.show) {
-    return null
-  }
-
   const submit = async (event) => {
     event.preventDefault()
 
