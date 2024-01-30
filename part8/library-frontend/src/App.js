@@ -16,9 +16,10 @@ const App = () => {
   const [allGenres, setAllGenres] = useState([])
   const [favoriteGenre, setFavoriteGenre] = useState(null)
   const authorsQuery = useQuery(ALL_AUTHORS)
-  const allBooksQuery = useQuery(ALL_BOOKS)
+  const allBooksQuery = useQuery(ALL_BOOKS, {fetchPolicy: 'cache-and-network'})
   const genreBooksQuery = useQuery(ALL_BOOKS, {
-    variables: {genre: genreChoice}
+    variables: {genre: genreChoice},
+    fetchPolicy: 'cache-and-network'
   })
   const favoriteGenreBooks = useQuery(ALL_BOOKS, {
     variables: {genre: favoriteGenre}
