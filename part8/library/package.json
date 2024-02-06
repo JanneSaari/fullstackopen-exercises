@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node library-backend.js",
     "dev": "nodemon library-backend.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cleardb": "node cleardb.js"
   },
   "author": "",
   "license": "ISC",

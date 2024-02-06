@@ -1,4 +1,4 @@
-const GraphQLError = require('graphql')
+const {GraphQLError} = require('graphql')
 const jwt = require('jsonwebtoken')
 const { PubSub } = require('graphql-subscriptions')
 const pubsub = new PubSub()
@@ -20,9 +20,6 @@ const resolvers = {
     me: async(root, args, context) => {
       return context.currentUser
     }
-  },
-  Author: {
-    bookCount: async (root) => Book.countDocuments({ author: root})
   },
   Mutation: {
     createUser: async(root, args) => {
@@ -83,7 +80,11 @@ const resolvers = {
       }
       try {
         book.author = author
-        await book.save()
+        const savedBook = await book.save()
+
+        const bookCount = author.bookCount + 1
+        const updatedAuthor = await Author.updateOne({name: author.name}, {bookCount: bookCount})
+        console.log(updatedAuthor)
       } catch (error) {
         throw new GraphQLError('Saving book failed', {
           extensions: {
