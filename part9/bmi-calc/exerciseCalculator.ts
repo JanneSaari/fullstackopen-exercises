@@ -20,36 +20,36 @@ const parseExerciseArguments = (args: string[]): Exercise => {
     return {
       target: Number(args[2]),
       hours: args.slice(3).map(arg => Number(arg))
-    }
+    };
   } else {
     throw new Error('Provided values were not numbers!');
   }
-}
+};
 
 const calculateExercises = (hours: number[], target: number): Result => {
   const dailyAverage = hours.reduce((hours, day) => 
     hours + day
-  ) / hours.length
-  const rateValue = dailyAverage / target
-  let rating
+  ) / hours.length;
+  const rateValue = dailyAverage / target;
+  let rating;
   if(rateValue < 0.5)
-    rating = 1 
+    rating = 1; 
   else if (rateValue >= 0.5 && rateValue < 1)
-    rating = 2
+    rating = 2;
   else 
-    rating = 3
+    rating = 3;
 
-  let ratingDescription = ''
+  let ratingDescription = '';
   switch (rating) {
     case 1:
-    ratingDescription = 'could be much better'
-      break
+    ratingDescription = 'could be much better';
+      break;
     case 2:
-      ratingDescription = 'not too bad but could be better'
-      break
+      ratingDescription = 'not too bad but could be better';
+      break;
     case 3:
-      ratingDescription = 'you hit the goal'
-      break
+      ratingDescription = 'you hit the goal';
+      break;
     default:
       break;
   }
@@ -65,14 +65,14 @@ const calculateExercises = (hours: number[], target: number): Result => {
     ratingDescription: ratingDescription,
     target: target,
     average: dailyAverage
-  }
-}
+  };
+};
 
 try {
-  const {target, hours} = parseExerciseArguments(process.argv)
-  console.log(calculateExercises(hours, target))
+  const {target, hours} = parseExerciseArguments(process.argv);
+  console.log(calculateExercises(hours, target));
 } catch (error: unknown) {
-  let errorMessage = 'Something bad happened.'
+  let errorMessage = 'Something bad happened.';
   if (error instanceof Error) {
     errorMessage += ' Error: ' + error.message;
   }

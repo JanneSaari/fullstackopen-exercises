@@ -19,18 +19,18 @@ app.get('/bmi', (req, res) => {
       height: height,
       weight: weight,
       bmi: bmi
-    })
+    });
   } catch (error) {
-    let errorMessage = 'Something bad happened.'
+    let errorMessage = 'Something bad happened.';
     if (error instanceof Error) {
       errorMessage += ' Error: ' + error.message;
     }
     console.log(errorMessage);
     res.status(400).send({
       error: "malformatted parameters"
-    })
+    });
   }
-})
+});
 
 const PORT = 3003;
 
