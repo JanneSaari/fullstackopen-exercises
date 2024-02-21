@@ -4,8 +4,14 @@ import axios from 'axios'
 
 const baseUrl = 'http://localhost:3000'
 
+interface ValidationError {
+  message: string;
+  errors: Record<string, string[]>
+}
+
 function App() {
   const [diaries, setDiaries] = useState<Diary[]>([]);
+  const [error, setError] = useState('');
   // const [date, setDate] = useState('');
   // const [weather, setWeather] = useState('');
   // const [visibility, setVisibility] = useState('');
@@ -34,15 +40,30 @@ function App() {
       console.log(response);
       setDiaries(diaries.concat(response.data));
     })
-    // setDate('');
-    // setWeather('');
-    // setVisibility('');
-    // setComment('');
+    .catch(error => {
+      if (axios.isAxiosError(error)) {
+        const message: string = error.response?.data;
+        console.log(message)
+        setError(message)
+      }
+    })
+      // setDate('');
+      // setWeather('');
+      // setVisibility('');
+      // setComment('');
   };
+
+  const errorStyle = {
+    color:'red',
+  }
 
   return (
     <div>
       <h2>Flights</h2>
+      {error 
+        ? <p style={errorStyle}>{error}</p> 
+        : null
+      }
       <form onSubmit={diaryCreation}>
         <label>Date 
           <input value={date} onChange={(event) => setDate(event.target.value)} />
