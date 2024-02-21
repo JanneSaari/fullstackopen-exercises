@@ -9,6 +9,16 @@ router.get('/', (_req, res) => {
   res.send(data);
 });
 
+router.get('/:id', (req, res) => {
+  const data = patients.getPatientById(req.params.id);
+  if(data === undefined){
+    res.status(404).send();
+  }
+  else {
+    res.send(data);
+  }
+});
+
 router.post('/', (req, res) => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
