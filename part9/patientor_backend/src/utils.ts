@@ -1,7 +1,12 @@
-import { Gender, NewPatient } from "./types";
+import { Entry, Gender, NewPatient } from "./types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
+};
+
+const isEntry = (param: unknown): param is Entry => {
+  console.log(param);
+  return true;
 };
 
 const isDate = (date: string): boolean => {
@@ -28,10 +33,39 @@ const parseGender = (gender: unknown): Gender => {
 
 const parseString = (name: unknown): string => {
   if (!name || !isString(name)) {
-    throw new Error('Incorrect or missing comment');
+    throw new Error('Incorrect or missing string value');
   }
 
   return name;
+};
+
+const parseEntry = (entry: unknown): Entry => {
+  if(!entry || !isEntry(entry)){
+    throw new Error('Incorrect or missing entry');
+  }
+  switch (entry.type) {
+    case "HealthCheck":
+      break;
+    case "Hospital":
+      break;
+    case "OccupationalHealthcare":
+      break;
+    default:
+      throw new Error('Incorrect or missing entry.type');
+  }
+
+  return entry;
+};
+
+const parseEntries = (entries: unknown): Entry[] => {
+  if(!entries || !Array.isArray(entries)){
+    throw new Error('Incorrect or missing entries');
+  }
+  
+  entries.map(entry => {
+    parseEntry(entry);
+  });
+  return entries as Entry[];
 };
 
 export const toNewPatient = (object: unknown): NewPatient => {
@@ -39,14 +73,14 @@ export const toNewPatient = (object: unknown): NewPatient => {
     throw new Error('Incorrect or missing data');
   }
   
-  if( 'name' in object && 'dateOfBirth' in object && 'ssn' in object && 'gender' in object && 'occupation' in object) {
+  if( 'name' in object && 'dateOfBirth' in object && 'ssn' in object && 'gender' in object && 'occupation' in object && 'entries' in object) {
     const newPatient: NewPatient = {
       name: parseString(object.name),
       dateOfBirth: parseDate(object.dateOfBirth),
       ssn: parseString(object.ssn),
       gender: parseGender(object.gender),
       occupation: parseString(object.occupation),
-      entries: []
+      entries: parseEntries(object.entries),
     };
     
     return newPatient;
