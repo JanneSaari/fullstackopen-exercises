@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { Patient } from "../../types";
+import { Diagnosis, Patient } from "../../types";
 import patientService from "../../services/patients";
+import diagnosisService from "../../services/diagnoses";
+
 
 interface Props {
   id: string | undefined;
@@ -8,6 +10,7 @@ interface Props {
 
 const PatientView = (props: Props) => {
   const [patient, setPatient] = useState<Patient | undefined>(undefined);
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -20,6 +23,14 @@ const PatientView = (props: Props) => {
       };
     fetchPatient();
   }, [props.id]);
+
+  useEffect(() => {
+    const fetchDiagnoses = async () => {
+      const diagnoses = await diagnosisService.getAll();
+      setDiagnoses(diagnoses);
+    };
+    void fetchDiagnoses();
+  }, []);
 
   if(!patient){
     return(
@@ -61,7 +72,10 @@ const PatientView = (props: Props) => {
                   Diagnoses:
                   <ul>
                     {entry.diagnosisCodes?.map(code => {
-                      return(<li key={code}>{code}</li>);
+                      const description: string | undefined = diagnoses.find(diagnosis => diagnosis.code === code)?.name;
+                      return(
+                        <li key={code}>{code} {description}</li>
+                      );
                     })}
                   </ul>
                 </div>          
