@@ -46,6 +46,29 @@ const PatientView = (props: Props) => {
           <>occupation: {patient.occupation}</>
           <br></br>
         </p>
+        <div>
+          <h3>Entries</h3>
+          {patient.entries.map(entry => {
+            return (
+              <div key={entry.id}>
+                <div>
+                  {entry.date}: 
+                </div>
+                <div>
+                  {entry.description}
+                </div>
+                <div>
+                  Diagnoses:
+                  <ul>
+                    {entry.diagnosisCodes?.map(code => {
+                      return(<li key={code}>{code}</li>);
+                    })}
+                  </ul>
+                </div>          
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }

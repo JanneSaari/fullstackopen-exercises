@@ -17,6 +17,8 @@ export interface Patient {
   gender: Gender;
   ssn?: string;
   dateOfBirth?: string;
+
+  entries: Entry[];
 }
 
 interface BaseEntry {
@@ -35,6 +37,23 @@ export enum HealthCheckRating {
   "CriticalRisk" = 3
 }
 
+interface HospitalEntry extends BaseEntry {
+  type: "Hospital";
+  discharge: {
+    date: string;
+    criteria: string;
+  }
+}
+
+interface OccupationalHealthcareEntry extends BaseEntry {
+  type: "OccupationalHealthcare";
+  employerName: string;
+  sickLeave?: {
+    startDate: string;
+    endDate: string;
+  }
+}
+
 interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
   healthCheckRating: HealthCheckRating;
@@ -42,6 +61,6 @@ interface HealthCheckEntry extends BaseEntry {
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
 export type Entry =
-  // | HospitalEntry
-  // | OccupationalHealthcareEntry
+  | HospitalEntry
+  | OccupationalHealthcareEntry
   | HealthCheckEntry;
