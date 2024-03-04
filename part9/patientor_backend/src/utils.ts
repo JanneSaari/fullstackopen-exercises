@@ -4,9 +4,8 @@ const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
 };
 
-const isEntry = (param: unknown): param is Entry => {
-  console.log(param);
-  return true;
+const isEntry = (entry: unknown): entry is Entry => {
+  return (entry as Entry).type !== undefined;
 };
 
 const isDate = (date: string): boolean => {
@@ -43,6 +42,7 @@ const parseEntry = (entry: unknown): Entry => {
   if(!entry || !isEntry(entry)){
     throw new Error('Incorrect or missing entry');
   }
+
   switch (entry.type) {
     case "HealthCheck":
       break;
@@ -62,10 +62,10 @@ const parseEntries = (entries: unknown): Entry[] => {
     throw new Error('Incorrect or missing entries');
   }
   
-  entries.map(entry => {
-    parseEntry(entry);
+  const test: Entry[] = entries.map(entry => {
+    return parseEntry(entry);
   });
-  return entries as Entry[];
+  return test;
 };
 
 export const toNewPatient = (object: unknown): NewPatient => {
