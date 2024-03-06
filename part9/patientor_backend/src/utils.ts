@@ -144,6 +144,18 @@ export const toNewEntry = (object: unknown): NewEntry => {
         type: 'OccupationalHealthcare',
         employerName: parseString(object.employerName)
       };
+      if('sickLeave' in object){
+        if(typeof object.sickLeave === 'object' && object.sickLeave &&
+         'startDate' in object.sickLeave && 'endDate' in object.sickLeave){
+          newEntry.sickLeave = {
+            startDate: parseDate(object.sickLeave.startDate),
+            endDate: parseDate(object.sickLeave.endDate)
+          };
+         }
+         else {
+          throw new Error('Incorrect data: optional field sickLeave is present, but it has invalid or missing values');
+         }
+      }
       console.log('new entry parsed', newEntry);
       return newEntry;
     }
