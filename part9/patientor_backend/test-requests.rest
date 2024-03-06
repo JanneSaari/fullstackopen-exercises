@@ -1,0 +1,45 @@
+POST http://localhost:3001/api/patients/d27736ec-f723-11e9-8f0b-362b9e155667/entries HTTP/1.1
+content-type: application/json
+
+{
+  "description": "test description",
+  "date": "2023-11-11",
+  "specialist": "test name",
+  "type": "HealthCheck",
+  "healthCheckRating": 1,
+  "diagnosisCodes": ["qweqwe", "dadadd"]
+}
+
+###
+
+POST http://localhost:3001/api/patients/d27736ec-f723-11e9-8f0b-362b9e155667/entries HTTP/1.1
+content-type: application/json
+
+{
+  "description": "test description",
+  "date": "2023-11-11",
+  "specialist": "test name",
+  "diagnosisCodes": ["qweqwe", "dadadd"],
+  "type": "Hospital",
+  "discharge": {
+    "date": "123-111-1",
+    "criteria": "Fixed stuff"
+  } 
+}
+
+###
+POST http://localhost:3001/api/patients/d27736ec-f723-11e9-8f0b-362b9e155667/entries HTTP/1.1
+content-type: application/json
+
+{
+  "description": "test description",
+  "date": "2023-11-11",
+  "specialist": "test name",
+  "diagnosisCodes": ["qweqwe", "dadadd"],
+  "type": "OccupationalHealthcare",
+  "employerName": "test employer",
+  "sickLeave": {
+    "startDate": "1234-11-11",
+    "endDate": "2345-11-22"
+  }
+}
