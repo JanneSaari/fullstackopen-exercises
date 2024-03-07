@@ -37,10 +37,15 @@ const PatientView = (props: Props) => {
 
   const submitNewEntry = async (values: EntryFormValues) => {
     try {
-      if(props.id){
+      if(props.id && patient){
         console.log('EntryFormValues:', values);
         const entry = await patientService.addEntry(values, props.id);
-        patient?.entries.concat(entry);
+        const updatedPatient: Patient = {
+          ...patient,
+          entries: patient?.entries.concat(entry)
+        };
+        console.log('updatedPatient:', updatedPatient);
+        setPatient(updatedPatient);
         setModalOpen(false);
       }
     } catch (e: unknown) {
