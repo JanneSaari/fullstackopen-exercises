@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { Patient } from "../../types";
+import { EntryFormValues, Patient } from "../../types";
 import patientService from "../../services/patients";
 import EntryView from "./EntryView";
+import { Button } from "@mui/material";
+import AddEntryModal from "../AddEntryModal";
+import axios from "axios";
 
 interface Props {
   id: string | undefined;
@@ -9,6 +12,16 @@ interface Props {
 
 const PatientView = (props: Props) => {
   const [patient, setPatient] = useState<Patient | undefined>(undefined);
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -22,6 +35,29 @@ const PatientView = (props: Props) => {
     fetchPatient();
   }, [props.id]);
 
+  const submitNewEntry = async (values: EntryFormValues) => {
+    try {
+      if(props.id){
+        console.log('EntryFormValues:', values);
+        const entry = await patientService.addEntry(values, props.id);
+        patient?.entries.concat(entry);
+        setModalOpen(false);
+      }
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace('Something went wrong. Error: ', '');
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
 
 
   if(!patient){
@@ -57,6 +93,15 @@ const PatientView = (props: Props) => {
             );
           })}
         </div>
+        <AddEntryModal
+          modalOpen={modalOpen}
+          onSubmit={submitNewEntry}
+          error={error}
+          onClose={closeModal}
+      />
+        <Button variant="contained" onClick={() => openModal()}>
+          Add New Entry
+      </Button>
       </div>
     );
   }

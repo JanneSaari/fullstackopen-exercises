@@ -123,10 +123,9 @@ export const toNewEntry = (object: unknown): NewEntry => {
       description: parseString(object.description),
       date: parseDate(object.date),
       specialist: parseString(object.specialist),
-      diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes)
+      diagnosisCodes: parseDiagnosisCodes(object)
     };
     let newEntry:NewEntry;
-    console.log('new base entry:', newBaseEntry);
     if(object.type === 'HealthCheck' && 'healthCheckRating' in object){
       console.log('healthcheck');
       newEntry = {

@@ -4,6 +4,7 @@ import diagnosisService from "../../services/diagnoses";
 // import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { Box } from "@mui/material";
 import { assertNever } from "../../utils";
+import HealthRatingBar from "../HealthRatingBar";
 
 interface Props {
   entry: Entry;
@@ -20,9 +21,9 @@ const EntryView = ({entry}: Props) => {
   }, []);
 
   const HealthCheckEntryView = () => {
-    const checkEntry = entry as HealthCheckEntry;
+    const healthCheckEntry = entry as HealthCheckEntry;
     return (
-      <div>Health status: {HealthCheckRating[checkEntry.healthCheckRating]}</div>
+      <HealthRatingBar rating={healthCheckEntry.healthCheckRating} showText={true}></HealthRatingBar>
     );
   };
   
