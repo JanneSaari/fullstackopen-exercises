@@ -1,6 +1,6 @@
 import { useState, SyntheticEvent } from "react";
 
-import {  TextField, Grid, Button, Slider } from '@mui/material';
+import {  TextField, Grid, Button, Slider, SelectChangeEvent, InputLabel, Select, MenuItem, FormGroup, Switch, FormControlLabel } from '@mui/material';
 
 import { EntryFormValues } from "../../types";
 
@@ -9,35 +9,35 @@ interface Props {
   onSubmit: (values: EntryFormValues) => void;
 }
 
+const EntryTypes = ["OccupationalHealthcare", "HealthCheck", "Hospital"];
 
 const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
+  //Base entry values
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
   const [entryType, setEntryType] = useState("HealthCheck");
-
+  //HealthCheck entry
   const [rating, setRating] = useState(0);
-  
-  // const [employerName, setEmployerName] = useState("");
-  // const [sickLeave, setSickLeave] = useState(false);
-  // const [sickLeaveStart, setSickLeaveStart] = useState("");
-  // const [sickLeaveEnd, setSickLeaveEnd] = useState("");
+  //Occupational entry
+  const [employerName, setEmployerName] = useState("");
+  const [sickLeave, setSickLeave] = useState(false);
+  const [sickLeaveStart, setSickLeaveStart] = useState("");
+  const [sickLeaveEnd, setSickLeaveEnd] = useState("");
+  //Hospital entry
+  const [dischargeDate, setDischargeDate] = useState("");
+  const [dischargeCriteria, setDischargeCriteria] = useState("");
 
-  // const [dischargeDate, setDischargeDate] = useState("");
-  // const [dischargeCriteria, setDischargeCriteria] = useState("");
-
-  // const onTypeChange = (event: SelectChangeEvent<string>) => {
-  //   event.preventDefault();
-  //   if ( typeof event.target.value === "string") {
-  //     const value = event.target.value;
-  //     console.log(value);
-  //     // const entryType
-  //     // if (entryType) {
-  //     //   setType(entryType);
-  //     // }
-  //   }
-  // };
+  const onTypeChange = (event: SelectChangeEvent<string>) => {
+    event.preventDefault();
+    if ( typeof event.target.value === "string" ||
+      EntryTypes.includes(event.target.value)) {
+      const value = event.target.value;
+      console.log(value);
+      setEntryType(value);
+    }
+  };
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -59,40 +59,36 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
         };
         onSubmit(newEntry);
         break;
-      // case "OccupationalHealthcare":
-      //   newEntry = {
-      //     ...newBaseEntry,
-      //     type: 'OccupationalHealthcare',
-      //     employerName
-      //   };
-      //   if(sickLeave){
-      //     newEntry.sickLeave = {
-      //       startDate: sickLeaveStart,
-      //       endDate: sickLeaveEnd
-      //     };
-      //   }
-      //   onSubmit(newEntry);
-      //   break;
-      // case "Hospital":
-      //   newEntry = {
-      //     ...newBaseEntry,
-      //     type: 'Hospital',
-      //     discharge: {
-        //     date: dischargeDate,
-        //     criteria: dischargeCriteria
-        //   }
-        // };
-        // onSubmit(newEntry);
-        // break;
+      case "OccupationalHealthcare":
+        newEntry = {
+          ...newBaseEntry,
+          type: 'OccupationalHealthcare',
+          employerName
+        };
+        if(sickLeave){
+          newEntry.sickLeave = {
+            startDate: sickLeaveStart,
+            endDate: sickLeaveEnd
+          };
+        }
+        onSubmit(newEntry);
+        break;
+      case "Hospital":
+        newEntry = {
+          ...newBaseEntry,
+          type: 'Hospital',
+          discharge: {
+            date: dischargeDate,
+            criteria: dischargeCriteria
+          }
+        };
+        onSubmit(newEntry);
+        break;
       default:
         break;
     }
 
   };
-
-  // const parseDiagnosisCodes = (): string[] | null => {
-  //   return null;
-  // };
 
   const showTypeSpecifics = (): JSX.Element | null => {
     switch (entryType) {
@@ -107,6 +103,12 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
     }
   };
 
+  const toggleSickleave = () => {
+    console.log("sickleave before toggle:", sickLeave);
+    setSickLeave(!sickLeave);
+    console.log("sickleave after toggle:", sickLeave);
+  };
+
   const showHealthCheckFields = () => {
     return (
       <div>
@@ -115,6 +117,8 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           defaultValue={0}
           min={0}
           max={4}
+          marks={true}
+          valueLabelDisplay="on"
           onChange={(_event, value) => {
             if(typeof value === 'number'){
               setRating(value);
@@ -128,12 +132,54 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   };
   const showOccupationalFields = () => {
     return (
-      <div></div>
+      <div>
+        <TextField
+          label="Employer"
+          fullWidth 
+          value={employerName}
+          onChange={({ target }) => setEmployerName(target.value)}
+        />
+        <FormGroup>
+          <FormControlLabel 
+            control={<Switch/>}
+            label="Sick leave"
+            checked={sickLeave}
+            onChange={toggleSickleave}
+          />
+          <TextField
+            label="Sickleave start date"
+            fullWidth 
+            value={sickLeaveStart}
+            disabled={!sickLeave}
+            onChange={({ target }) => setSickLeaveStart(target.value)}
+            />
+          <TextField
+            label="Sickleave end date"
+            fullWidth 
+            value={sickLeaveEnd}
+            disabled={!sickLeave}
+            onChange={({ target }) => setSickLeaveEnd(target.value)}
+            />
+        </FormGroup>
+      </div>
     );
   };
   const showHospitalFields = () => {
     return (
-      <div></div>
+      <div>
+        <TextField
+          label="Hospital discharge date"
+          fullWidth 
+          value={dischargeDate}
+          onChange={({ target }) => setDischargeDate(target.value)}
+        />
+        <TextField
+          label="Hospital discharge criteria"
+          fullWidth 
+          value={dischargeCriteria}
+          onChange={({ target }) => setDischargeCriteria(target.value)}
+        />
+      </div>
     );
   };
 
@@ -163,37 +209,17 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           label="Diagnosis Codes"
           fullWidth 
           value={diagnosisCodes}
-          onChange={({ target }) => {
-            const codes = target.value.split(",");
-            console.log("codes", codes);
-            setDiagnosisCodes(codes);
-            // setDiagnosisCodes(target.value.split(","));
-          }}
+          onChange={({ target }) => setDiagnosisCodes(target.value.split(",")) }
         />}
-        <TextField
-          label="Type"
-          fullWidth 
-          value={entryType}
-          onChange={({ target }) => setEntryType(target.value)}
-        />
-
-
-        {/* <InputLabel style={{ marginTop: 20 }}>Type</InputLabel>
+        <InputLabel style={{ marginTop: 20 }}>Type</InputLabel>
         <Select
           label="Type"
           fullWidth
           value={entryType}
           onChange={onTypeChange}
         >
-        {genderOptions.map(option =>
-          <MenuItem
-            key={option.label}
-            value={option.value}
-          >
-            {option.label
-          }</MenuItem>
-        )}
-        </Select> */}
+        {EntryTypes.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+        </Select>
 
         {showTypeSpecifics()}
 
