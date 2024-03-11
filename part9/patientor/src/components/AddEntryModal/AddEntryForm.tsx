@@ -1,21 +1,34 @@
-import { useState, SyntheticEvent } from "react";
+import { useState, SyntheticEvent, useEffect } from "react";
 
 import {  TextField, Grid, Button, Slider, SelectChangeEvent, InputLabel,
-   Select, MenuItem, FormGroup, Switch, FormControlLabel, Input
+   Select, MenuItem, FormGroup, Switch, FormControlLabel, Input, Theme, useTheme, OutlinedInput, Box, Chip
   } from '@mui/material';
 
-import { EntryFormValues } from "../../types";
+import { Diagnosis, EntryFormValues } from "../../types";
+import diagnosisService from "../../services/diagnoses";
 
 interface Props {
   onCancel: () => void;
   onSubmit: (values: EntryFormValues) => void;
 }
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
 const EntryTypes = ["OccupationalHealthcare", "HealthCheck", "Hospital"];
 
 const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
+  const theme = useTheme();
   const todayString: string = new Date().toString();
-
+  const [allDiagnoses, setAllDiagnoses] = useState<Diagnosis[]>([]);
   //Base entry values
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(todayString);
@@ -33,6 +46,24 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   const [dischargeDate, setDischargeDate] = useState("");
   const [dischargeCriteria, setDischargeCriteria] = useState("");
 
+  useEffect(() => {
+    const fetchAllDiagnoses = async () => {
+      const diagnoses = await diagnosisService.getAll();
+      console.log(diagnoses);
+      setAllDiagnoses(diagnoses);
+    };
+    fetchAllDiagnoses();
+  }, []);
+
+  function getMultiChoiceStyles(item: string, itemArray: readonly string[], theme: Theme) {
+    return {
+      fontWeight:
+        itemArray.indexOf(item) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium,
+    };
+  }
+
   const onTypeChange = (event: SelectChangeEvent<string>) => {
     event.preventDefault();
     if ( typeof event.target.value === "string" ||
@@ -41,6 +72,16 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
       console.log(value);
       setEntryType(value);
     }
+  };
+  
+  const onDiagnosisCodeChange = (event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event;
+    setDiagnosisCodes(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
   };
 
   const addEntry = (event: SyntheticEvent) => {
@@ -186,6 +227,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
     );
   };
 
+  console.log(allDiagnoses);
 
   return (
     <div>
@@ -208,17 +250,35 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           value={date}
           onChange={({ target }) => setDate(target.value)}
         />
-        <InputLabel style={{ marginTop: 20 }}>Type</InputLabel>
         <TextField
           label="Specialist"
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
         />
-        {<TextField
-          label="Diagnosis Codes"
+        <Select
+          multiple
           value={diagnosisCodes}
-          onChange={({ target }) => setDiagnosisCodes(target.value.split(",")) }
-        />}
+          onChange={onDiagnosisCodeChange}
+          fullWidth
+          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+          renderValue={(selected) => (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+              {selected.map((value) => (
+                <Chip key={value} label={value} />
+              ))}
+            </Box>
+          )}
+          MenuProps={MenuProps}
+        >
+          {allDiagnoses.map((diagnosis) => (
+            <MenuItem
+              key={diagnosis.code}
+              value={diagnosis.code}
+              style={getMultiChoiceStyles(diagnosis.code, allDiagnoses.map(
+                diagnosis => diagnosis.code), theme)}
+            >{`${diagnosis.code} - ${diagnosis.name}`}</MenuItem>
+          ))}
+        </Select>
         <InputLabel style={{ marginTop: 20 }}>Type</InputLabel>
         <Select
           label="Type"
