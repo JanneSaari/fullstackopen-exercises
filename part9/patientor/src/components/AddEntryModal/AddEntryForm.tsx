@@ -1,7 +1,7 @@
 import { useState, SyntheticEvent, useEffect } from "react";
 
 import {  TextField, Grid, Button, Slider, SelectChangeEvent, InputLabel,
-   Select, MenuItem, FormGroup, Switch, FormControlLabel, Input, Theme, useTheme, OutlinedInput, Box, Chip
+   Select, MenuItem, FormGroup, Switch, FormControlLabel, Input, Theme, useTheme, OutlinedInput, Box, Chip, FormControl
   } from '@mui/material';
 
 import { Diagnosis, EntryFormValues } from "../../types";
@@ -49,7 +49,6 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   useEffect(() => {
     const fetchAllDiagnoses = async () => {
       const diagnoses = await diagnosisService.getAll();
-      console.log(diagnoses);
       setAllDiagnoses(diagnoses);
     };
     fetchAllDiagnoses();
@@ -148,12 +147,6 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
     }
   };
 
-  const toggleSickleave = () => {
-    console.log("sickleave before toggle:", sickLeave);
-    setSickLeave(!sickLeave);
-    console.log("sickleave after toggle:", sickLeave);
-  };
-
   const showHealthCheckFields = () => {
     return (
       <div>
@@ -190,20 +183,24 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
             control={<Switch/>}
             label="Sick leave"
             checked={sickLeave}
-            onChange={toggleSickleave}
+            onChange={() => setSickLeave(!sickLeave)}
           />
           <InputLabel style={{ marginTop: 20 }}>Sickleave starting date</InputLabel>
-          <Input
-            type="date"
-            value={sickLeaveStart}
-            onChange={({ target }) => setSickLeaveStart(target.value)}
-          />
+          <FormControl disabled={!sickLeave}>
+            <Input
+              type="date"
+              value={sickLeaveStart}
+              onChange={({ target }) => setSickLeaveStart(target.value)}
+              />
+          </FormControl>
           <InputLabel style={{ marginTop: 20 }}>Sickleave ending date</InputLabel>
-          <Input
-            type="date"
-            value={sickLeaveEnd}
-            onChange={({ target }) => setSickLeaveEnd(target.value)}
-          />
+          <FormControl disabled={!sickLeave}>
+            <Input
+              type="date"
+              value={sickLeaveEnd}
+              onChange={({ target }) => setSickLeaveEnd(target.value)}
+            />
+          </FormControl>
         </FormGroup>
       </div>
     );
@@ -226,8 +223,6 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
       </div>
     );
   };
-
-  console.log(allDiagnoses);
 
   return (
     <div>
