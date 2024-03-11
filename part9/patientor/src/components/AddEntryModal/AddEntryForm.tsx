@@ -1,6 +1,8 @@
 import { useState, SyntheticEvent } from "react";
 
-import {  TextField, Grid, Button, Slider, SelectChangeEvent, InputLabel, Select, MenuItem, FormGroup, Switch, FormControlLabel } from '@mui/material';
+import {  TextField, Grid, Button, Slider, SelectChangeEvent, InputLabel,
+   Select, MenuItem, FormGroup, Switch, FormControlLabel, Input
+  } from '@mui/material';
 
 import { EntryFormValues } from "../../types";
 
@@ -12,9 +14,11 @@ interface Props {
 const EntryTypes = ["OccupationalHealthcare", "HealthCheck", "Hospital"];
 
 const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
+  const todayString: string = new Date().toString();
+
   //Base entry values
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(todayString);
   const [specialist, setSpecialist] = useState("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
   const [entryType, setEntryType] = useState("HealthCheck");
@@ -44,7 +48,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
 
     const newBaseEntry = {
       description,
-      date,
+      date: date.toString(),
       specialist,
       diagnosisCodes
     };
@@ -112,6 +116,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   const showHealthCheckFields = () => {
     return (
       <div>
+        <InputLabel style={{ marginTop: 20 }}>Health Rating</InputLabel>
         <Slider
           aria-label="Rating"
           defaultValue={0}
@@ -146,20 +151,18 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
             checked={sickLeave}
             onChange={toggleSickleave}
           />
-          <TextField
-            label="Sickleave start date"
-            fullWidth 
+          <InputLabel style={{ marginTop: 20 }}>Sickleave starting date</InputLabel>
+          <Input
+            type="date"
             value={sickLeaveStart}
-            disabled={!sickLeave}
             onChange={({ target }) => setSickLeaveStart(target.value)}
-            />
-          <TextField
-            label="Sickleave end date"
-            fullWidth 
+          />
+          <InputLabel style={{ marginTop: 20 }}>Sickleave ending date</InputLabel>
+          <Input
+            type="date"
             value={sickLeaveEnd}
-            disabled={!sickLeave}
             onChange={({ target }) => setSickLeaveEnd(target.value)}
-            />
+          />
         </FormGroup>
       </div>
     );
@@ -167,9 +170,9 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   const showHospitalFields = () => {
     return (
       <div>
-        <TextField
-          label="Hospital discharge date"
-          fullWidth 
+        <InputLabel style={{ marginTop: 20 }}>Hospital discharge date</InputLabel>
+        <Input
+          type="date"
           value={dischargeDate}
           onChange={({ target }) => setDischargeDate(target.value)}
         />
@@ -186,44 +189,51 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
 
   return (
     <div>
-      <form onSubmit={addEntry}>
+      <Grid
+        component={"form"}
+        onSubmit={addEntry}
+        noValidate
+        autoComplete="off"
+      >
         <TextField
           label="Description"
-          fullWidth 
+          fullWidth
           value={description}
+          autoFocus={true}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <TextField
-          label="Date"
-          fullWidth 
+        <InputLabel style={{ marginTop: 20 }}>Date</InputLabel>
+        <Input
+          type="date"
           value={date}
           onChange={({ target }) => setDate(target.value)}
         />
+        <InputLabel style={{ marginTop: 20 }}>Type</InputLabel>
         <TextField
           label="Specialist"
-          fullWidth 
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
         />
         {<TextField
           label="Diagnosis Codes"
-          fullWidth 
           value={diagnosisCodes}
           onChange={({ target }) => setDiagnosisCodes(target.value.split(",")) }
         />}
         <InputLabel style={{ marginTop: 20 }}>Type</InputLabel>
         <Select
           label="Type"
-          fullWidth
           value={entryType}
           onChange={onTypeChange}
+          style={{marginBottom: 20}}
         >
         {EntryTypes.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </Select>
 
         {showTypeSpecifics()}
 
-        <Grid>
+        <Grid
+          style={{margin: 20}}
+        >
           <Grid item>
             <Button
               color="secondary"
@@ -247,7 +257,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
             </Button>
           </Grid>
         </Grid>
-      </form>
+      </Grid>
     </div>
   );
 };
